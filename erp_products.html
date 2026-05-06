@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fresh Guru | Inventory &amp; Product Catalog</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#f3fcef",
+                        "secondary-container": "#d0e1fb",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#002109",
+                        "inverse-surface": "#2a322a",
+                        "outline-variant": "#bccbb9",
+                        "surface-dim": "#d4ddd0",
+                        "surface": "#f3fcef",
+                        "secondary": "#505f76",
+                        "tertiary-container": "#ff8b7c",
+                        "tertiary-fixed": "#ffdad5",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#f3fcef",
+                        "on-secondary-fixed": "#0b1c30",
+                        "surface-container-low": "#edf6ea",
+                        "inverse-primary": "#4ae176",
+                        "primary": "#006e2f",
+                        "surface-variant": "#dce5d9",
+                        "on-tertiary-fixed": "#410001",
+                        "on-surface": "#161d16",
+                        "on-tertiary-fixed-variant": "#7f2a21",
+                        "on-error": "#ffffff",
+                        "surface-container": "#e8f0e4",
+                        "inverse-on-surface": "#ebf3e7",
+                        "secondary-fixed": "#d3e4fe",
+                        "surface-tint": "#006e2f",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "surface-container-highest": "#dce5d9",
+                        "surface-container-high": "#e2ebde",
+                        "tertiary": "#9e4036",
+                        "on-secondary-container": "#54647a",
+                        "tertiary-fixed-dim": "#ffb4a9",
+                        "on-background": "#161d16",
+                        "on-tertiary-container": "#76231b",
+                        "primary-fixed-dim": "#4ae176",
+                        "on-primary-fixed-variant": "#005321",
+                        "outline": "#6d7b6c",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#3d4a3d",
+                        "primary-container": "#22c55e",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed": "#6bff8f",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#004b1e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "sm": "8px",
+                        "xl": "32px",
+                        "sidebar_width": "260px",
+                        "gutter": "20px",
+                        "base": "4px"
+                    },
+                    "fontFamily": {
+                        "h1": ["Inter"],
+                        "h2": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "kpi-value": ["Inter"],
+                        "body-table": ["Inter"],
+                        "table-header": ["Inter"],
+                        "label-status": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h1": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "h2": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "kpi-value": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-table": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "table-header": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "label-status": ["12px", {"lineHeight": "12px", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f3fcef;
+        }
+        /* Custom scrollbar for side panel */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #dce5d9;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="font-body-sm text-on-background">
+    <!-- SideNavBar -->
+    <aside class="fixed left-0 top-0 h-full w-[260px] bg-white border-r border-slate-100 flex flex-col py-4 z-40">
+        <div class="px-6 mb-8 flex items-center gap-2.5" onclick="window.location.href='erp_dashboard.html'" style="cursor: pointer;">
+            <div class="w-10 h-10 bg-emerald-50/80 rounded-xl flex items-center justify-center">
+                <span class="material-symbols-outlined text-[#1a4d2e] text-2xl" style="font-variation-settings: 'wght' 300;">eco</span>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-tighter leading-none logo-font text-[#1a4d2e]">Fresh Guru</h1>
+                <p class="text-[9px] text-slate-400 uppercase tracking-[0.3em] font-bold opacity-60 mt-0.5">ADMIN PORTAL</p>
+            </div>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="flex items-center px-6 py-3 text-slate-500 hover:bg-slate-50 transition-all" href="erp_dashboard.html">
+                <span class="material-symbols-outlined mr-3">dashboard</span>
+                <span class="font-semibold text-sm">Dashboard</span>
+            </a>
+            <a class="flex items-center px-6 py-3 text-slate-500 hover:bg-slate-50 transition-all" href="erp_customers.html">
+                <span class="material-symbols-outlined mr-3">person</span>
+                <span class="font-semibold text-sm">Customers</span>
+            </a>
+            <a class="flex items-center px-6 py-3 text-[#1a4d2e] bg-[#1a4d2e]/5 border-l-4 border-[#1a4d2e]" href="erp_products.html">
+                <span class="material-symbols-outlined mr-3">inventory_2</span>
+                <span class="font-semibold text-sm">Products</span>
+            </a>
+            <a class="flex items-center px-6 py-3 text-secondary hover:bg-surface-container hover:text-on-surface cursor-pointer transition-all duration-200" href="erp_delivery.html">
+                <span class="material-symbols-outlined mr-3">local_shipping</span>
+                <span class="font-medium text-[13px]">Delivery</span>
+            </a>
+            <a class="flex items-center px-6 py-3 text-secondary hover:bg-surface-container hover:text-on-surface cursor-pointer transition-all duration-200" href="erp_reports.html">
+                <span class="material-symbols-outlined mr-3">assessment</span>
+                <span class="font-medium text-[13px]">Reports</span>
+            </a>
+        </nav>
+        <div class="mt-auto px-6 border-t border-outline-variant pt-4 space-y-1">
+            <div class="flex items-center py-2 text-secondary hover:text-on-surface cursor-pointer transition-all duration-200">
+                <span class="material-symbols-outlined mr-3 text-sm">help</span>
+                <span class="text-[13px]">Support</span>
+            </div>
+            <div class="flex items-center py-2 text-error hover:opacity-80 cursor-pointer transition-all duration-200">
+                <span class="material-symbols-outlined mr-3 text-sm">logout</span>
+                <span class="text-[13px]">Logout</span>
+            </div>
+        </div>
+    </aside>
+<!-- Main Content Shell -->
+<main class="ml-[260px] min-h-screen flex flex-col">
+        <!-- TopAppBar -->
+        <header class="h-16 bg-white border-b border-slate-200 sticky top-0 z-40 px-6 flex justify-between items-center w-full">
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[#22c55e] text-2xl font-black">eco</span>
+                    <span class="text-xl font-black tracking-tighter" style="color: #22c55e; font-family: 'Outfit', sans-serif;">Fresh Guru</span>
+                </div>
+                <div class="h-6 w-px bg-slate-200 mx-2"></div>
+                <h2 class="font-bold text-lg text-slate-900">Product Management</h2>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors cursor-pointer active:opacity-80">
+                    <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors cursor-pointer active:opacity-80">
+                    <span class="material-symbols-outlined">settings</span>
+                </button>
+                <div class="h-8 w-px bg-slate-200 mx-1"></div>
+                <img alt="Admin profile photo" class="h-8 w-8 rounded-full border border-slate-200" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC0vD4oIZ9RHF2wCjHoyEuTGnFaLw_uZzgHmxXsOZycGnN8sHTxbfIPUsx_2GsWAGpc3W4sMX9ImvhmgHb-5mV6ceZ6SwBqMmdRWot308zzgDODGv8rpIiy6a_kPwfSXEieeEvpM1Of431vs4nH1aLpYqYY19oBS1SVZI7e035hCW5miCJlHMY3VrXAhqwU2GH8JahvFr1hFIWawu1fPmA4G2HfHIGXIVqU4aS4XurhKjOwPXFiBrp3h3TDimPt7YC-rbAl4A8gw"/>
+            </div>
+        </header>
+<!-- Canvas -->
+<div class="p-lg space-y-lg">
+<!-- Inventory Management Actions & Stats -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-md">
+<div class="md:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-md">
+<div class="bg-white p-md border border-slate-200 rounded shadow-sm flex flex-col justify-between">
+<span class="text-table-header text-slate-500 uppercase">Total Inventory Value</span>
+<span class="text-kpi-value text-slate-900 mt-sm">₹12,45,280</span>
+<div class="flex items-center text-xs text-green-600 mt-xs font-semibold">
+<span class="material-symbols-outlined text-sm mr-1" data-icon="trending_up">trending_up</span>
+                            +4.2% from last week
+                        </div>
+</div>
+<div class="bg-white p-md border border-slate-200 rounded shadow-sm flex flex-col justify-between">
+<span class="text-table-header text-slate-500 uppercase">Active Products</span>
+<span class="text-kpi-value text-slate-900 mt-sm">842</span>
+<div class="text-xs text-slate-400 mt-xs">Across 14 categories</div>
+</div>
+<div class="bg-white p-md border border-slate-200 rounded shadow-sm flex flex-col justify-between cursor-pointer hover:border-primary transition-all group" onclick="window.location.href='erp_inbound_damage.html'">
+<span class="text-table-header text-slate-500 uppercase group-hover:text-primary transition-colors">Incoming Batches</span>
+<span class="text-kpi-value text-slate-900 mt-sm">12</span>
+<div class="text-xs text-primary font-semibold mt-xs flex items-center gap-1">
+    <span class="material-symbols-outlined text-[14px]">notification_important</span>
+    3 Quality Issues Reported
+</div>
+</div>
+</div>
+                    <div class="bg-white p-md border border-slate-200 rounded shadow-sm flex flex-col gap-sm">
+                        <button onclick="openAddProductModal()" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 hover:bg-green-700 transition-all active:scale-95 shadow-md group">
+                            <span class="material-symbols-outlined text-[20px]">add</span>
+                            Add Product
+                        </button>
+                        <button onclick="openAddCategoryModal()" class="w-full border border-slate-200 text-slate-700 py-2 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 hover:bg-slate-50 transition-all active:scale-95">
+                            <span class="material-symbols-outlined text-[18px]">category</span>
+                            Add Category
+                        </button>
+                    </div>
+</div>
+<!-- Urgent Section: Low Stock Alerts (Bento Style) -->
+<section>
+<div class="flex items-center gap-2 mb-md">
+<span class="material-symbols-outlined text-error" data-icon="warning">warning</span>
+<h2 class="font-h2 text-slate-900">Immediate Procurement Needed</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<!-- Low Stock Card 1 -->
+<div class="bg-error-container/10 border border-error-container p-md rounded flex items-center gap-md">
+<div class="w-16 h-16 rounded overflow-hidden flex-shrink-0">
+<img alt="A-Grade Alphonso Mangoes" class="w-full h-full object-cover" data-alt="A close-up photograph of vibrant, ripe yellow Alphonso mangoes stacked neatly in a wooden crate. The lighting is bright and summery, highlighting the smooth skin and rich golden color of the fruit. The setting is clean and professional, representing high-quality organic wholesale produce." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8rSzoqUibt8OALyKq7OTFBzdDPV63UM--eYjSn6yDA-eK30Jg_OV-klWCGeRkQjnlHP2zFrP7OhO8QINiwlckNMxQ7Eu9yccbBkiOtBtXyuza7ndXLtN11rEfx6sx4dBVN2r8m_3LpdurXCA3t-tHCznEoCKKlWcQVzVzA2DWqB5J0_JJBAzLg7-9z_dfHKModxGzFDb9R_BKJrO4eJafAh_pJoY5xS7RdReLubBjNEYe7kdgtiXAzTSoozJnZkYBCg7SP-xPkg"/>
+</div>
+<div class="flex-1">
+<div class="text-sm font-bold text-slate-900">A-Grade Alphonso Mangoes</div>
+<div class="text-xs text-error font-bold mt-1">4 Crate left • Target 20</div>
+<div class="mt-2 flex gap-2">
+<button class="text-[11px] bg-error text-white px-2 py-1 rounded font-bold uppercase tracking-wider">Order Now</button>
+</div>
+</div>
+</div>
+<!-- Low Stock Card 2 -->
+<div class="bg-error-container/10 border border-error-container p-md rounded flex items-center gap-md">
+<div class="w-16 h-16 rounded overflow-hidden flex-shrink-0">
+<img alt="Spanish Red Onions" class="w-full h-full object-cover" data-alt="A detailed shot of fresh Spanish red onions with their distinctive purple skins, displayed in a clean industrial warehouse setting. The overhead lighting is soft and even, casting minimal shadows and emphasizing the fresh, crisp quality of the vegetable. The background is a neutral grey concrete." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdiesR4c20dS3HxNd73oa2UfoKRR3b2XTZgULjXa-cyzfT3_YZpT6aRXK8gafeDQ9VbpYf9tPqRQHHkcDBNWnTqTQicUcIx5W_iPfdr1sGceOJQy1zBJnxzt6Pxt7HTjY0R9yY0LD5qnFJRp-ZOZJ0mx792ZZVHFHrdM8hSz8JKwvzdpzuWV_IqzVzbpS-FYqEyjejxQqrVtBoGXbUGCPdDUuEB8Y8ZDqOJLoGb_MyO1fPUC079HJJtW_MuA0soz89gxBTi_8o7A"/>
+</div>
+<div class="flex-1">
+<div class="text-sm font-bold text-slate-900">Spanish Red Onions</div>
+<div class="text-xs text-error font-bold mt-1">12 kg left • Target 150</div>
+<div class="mt-2 flex gap-2">
+<button class="text-[11px] bg-error text-white px-2 py-1 rounded font-bold uppercase tracking-wider">Order Now</button>
+</div>
+</div>
+</div>
+<!-- Low Stock Card 3 -->
+<div class="bg-amber-50 border border-amber-200 p-md rounded flex items-center gap-md">
+<div class="w-16 h-16 rounded overflow-hidden flex-shrink-0">
+<img alt="Premium Avocados" class="w-full h-full object-cover" data-alt="A collection of ripe, dark green Hass avocados arranged on a minimalist white surface. One avocado is sliced in half to reveal its perfect, creamy lime-green interior. The lighting is soft and sophisticated, creating a high-end gourmet culinary aesthetic suitable for a premium wholesale food distributor." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7DkEmftFgXKbArdXvK2tg1aAKD6sRMnZvlTS1LW_zAu7w6kIX1O87iEtP3IwtWapmtdP42QdE_TCiwCePUtEW3cCV4f-H8Vrc-zf59yAuxMruHA_bhmw1L5Gd565YcXQC93DnquY2i8QhG7zyWzm-0SFOR0mkyHtwKPdwQC-xvHPTaHJbRULr2da0UndU53ecYR2_EwF_vGXU19g2s1BT5ar0K5iaQBs1vVydggDrvhMewzNETS5toDq8_W4YqdmIyC5Ft8fBzQ"/>
+</div>
+<div class="flex-1">
+<div class="text-sm font-bold text-slate-900">Premium Avocados</div>
+<div class="text-xs text-amber-600 font-bold mt-1">15 Box left • Target 40</div>
+<div class="mt-2 flex gap-2">
+<button class="text-[11px] bg-amber-600 text-white px-2 py-1 rounded font-bold uppercase tracking-wider">Restock</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Product Catalog (Table View) -->
+<section class="bg-white border border-slate-200 rounded shadow-sm overflow-hidden">
+<div class="px-lg py-md border-b border-slate-200 flex justify-between items-center">
+<h2 class="font-h2 text-slate-900">Product Catalog</h2>
+<div class="flex gap-2">
+                        <button onclick="toggleDamageLogging(this)" id="damageLogBtn" class="bg-white border border-red-200 text-red-600 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center transition-all hover:bg-red-50 shadow-sm active:scale-95">
+                            <span class="material-symbols-outlined mr-1 text-[18px]">report_problem</span>
+                            Log Damaged Product
+                        </button>
+<button class="px-3 py-1.5 border border-slate-200 rounded text-xs font-semibold flex items-center gap-1 hover:bg-slate-50">
+<span class="material-symbols-outlined text-[16px]" data-icon="filter_list">filter_list</span>
+                            Filter
+                        </button>
+<button class="px-3 py-1.5 border border-slate-200 rounded text-xs font-semibold flex items-center gap-1 hover:bg-slate-50">
+<span class="material-symbols-outlined text-[16px]" data-icon="download">download</span>
+                            Export
+                        </button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full border-collapse">
+<thead class="bg-slate-50">
+<tr>
+<th class="px-lg py-3 text-left text-table-header text-slate-500 border-b border-slate-200 uppercase">Product Details</th>
+<th class="px-lg py-3 text-left text-table-header text-slate-500 border-b border-slate-200 uppercase">Category</th>
+<th class="px-lg py-3 text-left text-table-header text-slate-500 border-b border-slate-200 uppercase">Unit Price</th>
+<th class="px-lg py-3 text-left text-table-header text-slate-500 border-b border-slate-200 uppercase">Inventory</th>
+<th class="px-lg py-3 text-left text-table-header text-slate-500 border-b border-slate-200 uppercase">Status</th>
+<th class="px-lg py-3 text-right text-table-header text-slate-500 border-b border-slate-200 uppercase">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<!-- Row 1 -->
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-slate-100">
+<img alt="Broccoli Florets" class="w-full h-full object-cover" data-alt="A cluster of fresh, emerald green broccoli florets captured with a sharp focus. The lighting is cool and daylight-balanced, highlighting the intricate textures of the vegetable. The background is a clean, neutral white, emphasizing the product's freshness and organic quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuARLF2vvynxX2XbqsOHet1zP3ZzKcXOQDPI64UweatW227VecC_yHOyMVxB7dgm12BkiyF92qd8DD2viLx65af-4NlQi_NI_ssaI9j_nAAcahPcW_LGA1TPrT194J_bP6sSOFHdUHpiIc-UMsecooA1WcZZHQf0JCK2vnlrFZSOIo3ivoKum2C0Cyy9BDPcBqq5fMtouLccuQ8n3JvWdoh0YPSDxocFUGr9ppOAmenOlYRwNfaSg5OQ-TRglaswzixij6LFMOZCRg"/>
+</div>
+<div>
+<div class="font-semibold text-slate-900">Broccoli Florets</div>
+<div class="text-[11px] text-slate-400">SKU: VEG-001-BROC</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-md">
+<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[11px] font-bold uppercase tracking-tight">Vegetable</span>
+</td>
+<td class="px-lg py-md">
+<div class="text-sm font-semibold">₹85.00 <span class="text-slate-400 font-normal">/ kg</span></div>
+</td>
+<td class="px-lg py-md">
+<div class="inventory-qty text-sm font-bold text-slate-900">450 kg</div>
+<div class="w-24 h-1 bg-slate-100 rounded-full mt-1 overflow-hidden">
+<div class="inventory-bar bg-green-500 h-full w-[75%]"></div>
+</div>
+</td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center px-2 py-1 rounded text-label-status bg-green-50 text-green-700">IN STOCK</span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="text-slate-400 hover:text-green-600 transition-colors">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-slate-100">
+<img alt="A-Grade Alphonso Mangoes" class="w-full h-full object-cover" data-alt="Vibrant, ripe yellow Alphonso mangoes stacked neatly in a wooden crate, representing high-quality organic wholesale produce with warm, bright lighting highlighting the smooth skin." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBaUSTvlL3tEtDDX3NFl0zqb_fhmCX-k077EumytYikQotcLmk7Db95WGAxgmqsPZdxAr7rcy9y4HOPzk1fom_-1tSefIUxuz3nihRVdyCYhdmnnRVS5CiEV7XQA13KBeRcmY3FRLLsItO1RcWt4n-pdUpOBZuz1z0BuQ9AB3yrNNuBOGCTDYgNHuT-ctunP3joJYQbh46mud5bodt8Vex3n9h09dME3sCENS2RNaBWUcQ1c_0s5O_PMF_tI0g8RtwO1Jq9FSxNA"/>
+</div>
+<div>
+<div class="font-semibold text-slate-900">A-Grade Alphonso Mangoes</div>
+<div class="text-[11px] text-slate-400">SKU: FRU-005-MANG</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-md">
+<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[11px] font-bold uppercase tracking-tight">Fruit</span>
+</td>
+<td class="px-lg py-md">
+<div class="text-sm font-semibold">₹1,200.00 <span class="text-slate-400 font-normal">/ Crate</span></div>
+</td>
+<td class="px-lg py-md">
+<div class="inventory-qty text-sm font-bold text-slate-900">4 Crates</div>
+<div class="w-24 h-1 bg-slate-100 rounded-full mt-1 overflow-hidden">
+<div class="inventory-bar bg-error h-full w-[20%]"></div>
+</div>
+</td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center px-2 py-1 rounded text-label-status bg-error-container/20 text-error">LOW STOCK</span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="text-slate-400 hover:text-green-600 transition-colors">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-slate-100">
+<img alt="Spanish Red Onions" class="w-full h-full object-cover" data-alt="Fresh Spanish red onions with purple skins in a clean industrial warehouse setting, soft overhead lighting casting minimal shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcSG5ci2bGe7RmvMU9qdEEmu-sJesLTQric7RXLen6J03YlTO4v1FjkAP9fBjWeAhSfPuS66w0ZVTgTnEqQ7QomTqHb1Fn5tA2GF-TADN5pcJLs2ccKow4c1tQ91xJGdBT-Idx2VEwAOImQ5VQ04gYDOVAwP3rM1CeGPIsOysY7gJoSQhBb9Y46VAeR6qScWSu1orKlqOonwgmV7yfZOG9w2hXw9sWvPP-HS-E96sQYcbwed74d7r3zv0T7mRbjHbAgq-sj8QcnA"/>
+</div>
+<div>
+<div class="font-semibold text-slate-900">Spanish Red Onions</div>
+<div class="text-[11px] text-slate-400">SKU: VEG-042-ONIO</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-md">
+<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[11px] font-bold uppercase tracking-tight">Vegetable</span>
+</td>
+<td class="px-lg py-md">
+<div class="text-sm font-semibold">₹35.00 <span class="text-slate-400 font-normal">/ kg</span></div>
+</td>
+<td class="px-lg py-md">
+<div class="text-sm">12 kg</div>
+<div class="w-24 h-1 bg-slate-100 rounded-full mt-1 overflow-hidden">
+<div class="bg-error h-full w-[8%]"></div>
+</div>
+</td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center px-2 py-1 rounded text-label-status bg-error-container/20 text-error">LOW STOCK</span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="text-slate-400 hover:text-green-600 transition-colors">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-slate-100">
+<img alt="Premium Avocados" class="w-full h-full object-cover" data-alt="Ripe dark green Hass avocados on a white surface, with one sliced half revealing creamy green interior, sophisticated soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvJW8FIdlmCxlPjgLL2u3tbhUGg9qzz84laczTixX2Q_ad_TqsST3dDediFcGgGiW6g8uaQtZ7ilkJwBQDm81ErvFRssLqI1alWnS0FGUadQZuOnNa57lnYfIiXO-6sOShIuVykkngcMSwpnSoeNkdw1mP2GqwmhgeFNGOFq2TXTfwh1-gyUhQVR02817sq_xgX5JrKcUu-wiIHryX-VbS5eAcHvc3xtC-zF630qYaFO2nWjK6vhe9FHWGcnilxqI0o4VXmujH2w"/>
+</div>
+<div>
+<div class="font-semibold text-slate-900">Premium Avocados</div>
+<div class="text-[11px] text-slate-400">SKU: FRU-088-AVOC</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-md">
+<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[11px] font-bold uppercase tracking-tight">Fruit</span>
+</td>
+<td class="px-lg py-md">
+<div class="text-sm font-semibold">₹450.00 <span class="text-slate-400 font-normal">/ Box</span></div>
+</td>
+<td class="px-lg py-md">
+<div class="text-sm">15 Boxes</div>
+<div class="w-24 h-1 bg-slate-100 rounded-full mt-1 overflow-hidden">
+<div class="bg-amber-500 h-full w-[35%]"></div>
+</div>
+</td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center px-2 py-1 rounded text-label-status bg-amber-100 text-amber-700">MID STOCK</span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="text-slate-400 hover:text-green-600 transition-colors">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-slate-100">
+<img alt="Chiquita Bananas" class="w-full h-full object-cover" data-alt="A large cluster of bright yellow, unblemished Chiquita bananas against a neutral backdrop. The lighting is high-key and clean, emphasizing the vibrant color and freshness of the fruit. The composition is balanced and professional, typical of high-quality retail produce catalog photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPcUerfT28cHlg6A8sV3S39ewqLiWo-wWZuvJtBugnmxqSMFFLCIobQ2Ln9X0RE_TG3NJSfXnUfmV7Z4w0ql3IAuw-y4lvUokOIPocNfCRS50IunAvo3oCbTVSKuAfFmdkJeIZ26ySvqjtmnZUR4prhXJtGkU4NAHZxfJzIR5v92W1XG2pSAOkD51fcmYKDgWjEY6ZmhCt7ekA0H8U-Gm-z-MJRuAB3gqC7Bsm1yJIWCu4KnRtbxKCsJEdXl58hOIh0qGHYX9aJA"/>
+</div>
+<div>
+<div class="font-semibold text-slate-900">Chiquita Bananas</div>
+<div class="text-[11px] text-slate-400">SKU: FRU-012-BANA</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-md">
+<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[11px] font-bold uppercase tracking-tight">Fruit</span>
+</td>
+<td class="px-lg py-md">
+<div class="text-sm font-semibold">₹180.00 <span class="text-slate-400 font-normal">/ Bunch</span></div>
+</td>
+<td class="px-lg py-md">
+<div class="text-sm">0 Bunches</div>
+<div class="w-24 h-1 bg-slate-100 rounded-full mt-1 overflow-hidden">
+<div class="bg-slate-300 h-full w-[0%]"></div>
+</div>
+</td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center px-2 py-1 rounded text-label-status bg-slate-200 text-slate-500">OUT OF STOCK</span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="text-slate-400 hover:text-green-600 transition-colors">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-lg py-3 border-t border-slate-200 bg-slate-50 flex justify-between items-center text-[12px] text-slate-500">
+<div>Showing 1 - 5 of 842 products</div>
+<div class="flex gap-2">
+<button class="px-2 py-1 border border-slate-200 rounded hover:bg-white disabled:opacity-50" disabled="">Previous</button>
+<button class="px-2 py-1 border border-slate-200 rounded hover:bg-white">Next</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Add Product Modal -->
+<div id="addProductModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden border border-slate-200 animate-in fade-in zoom-in duration-200">
+        <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+            <h3 class="text-lg font-bold text-slate-900">Add New Product</h3>
+            <button onclick="closeAddProductModal()" class="text-slate-400 hover:text-slate-600">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form onsubmit="handleNewProduct(event)" class="p-6 space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Product Name</label>
+                <input required id="prodName" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none" placeholder="e.g. Fuji Apples" type="text"/>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Category</label>
+                    <select id="prodCat" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none">
+                        <option>Fruit</option>
+                        <option>Vegetable</option>
+                        <option>Dairy</option>
+                        <option>Grain</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Unit Price (₹)</label>
+                    <input required id="prodPrice" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none" placeholder="0.00" type="number" step="0.01"/>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Product Image</label>
+                <div class="flex flex-col gap-3">
+                    <div id="imagePreview" class="w-full h-32 rounded-lg border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden relative group">
+                        <div class="text-center p-4 group-hover:opacity-0 transition-opacity">
+                            <span class="material-symbols-outlined text-slate-300 text-3xl">image_search</span>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Tap to upload or use camera</p>
+                        </div>
+                        <img id="previewImg" class="absolute inset-0 w-full h-full object-cover hidden" />
+                        <input type="file" id="prodFile" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" onchange="previewProductImage(this)"/>
+                        <input type="hidden" id="prodImg" value=""/>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="document.getElementById('prodFile').click()" class="flex-1 px-4 py-2 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-colors flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-base">upload</span>
+                            Upload File
+                        </button>
+                        <button type="button" onclick="triggerCamera()" class="flex-1 px-4 py-2 bg-primary/10 text-primary rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-primary/20 transition-colors flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-base">photo_camera</span>
+                            Use Camera
+                        </button>
+                    </div>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-2 italic">Max size: 5MB. Formats: JPG, PNG, WEBP</p>
+            </div>
+            <div class="pt-4 flex gap-3">
+                <button type="button" onclick="closeAddProductModal()" class="flex-1 py-2 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Cancel</button>
+                <button type="submit" class="flex-1 py-2 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-lg shadow-sm transition-all">Add Product</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add Category Modal -->
+<div id="addCategoryModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-sm rounded-xl shadow-2xl overflow-hidden border border-slate-200 animate-in fade-in zoom-in duration-200">
+        <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+            <h3 class="text-lg font-bold text-slate-900">New Category</h3>
+            <button onclick="closeAddCategoryModal()" class="text-slate-400 hover:text-slate-600">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form onsubmit="handleNewCategory(event)" class="p-6 space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Category Name</label>
+                <input required id="catName" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none" placeholder="e.g. Organic Snacks" type="text"/>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Description</label>
+                <textarea id="catDesc" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none h-20" placeholder="Optional category description..."></textarea>
+            </div>
+            <div class="pt-4 flex gap-3">
+                <button type="button" onclick="closeAddCategoryModal()" class="flex-1 py-2 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Cancel</button>
+                <button type="submit" class="flex-1 py-2 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-lg shadow-sm transition-all">Create Category</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    function openAddProductModal() {
+        document.getElementById('addProductModal').classList.remove('hidden');
+    }
+
+    function closeAddProductModal() {
+        document.getElementById('addProductModal').classList.add('hidden');
+    }
+
+    function openAddCategoryModal() {
+        document.getElementById('addCategoryModal').classList.remove('hidden');
+    }
+
+    function closeAddCategoryModal() {
+        document.getElementById('addCategoryModal').classList.add('hidden');
+    }
+
+    function handleNewCategory(e) {
+        e.preventDefault();
+        const name = document.getElementById('catName').value;
+        closeAddCategoryModal();
+        e.target.reset();
+        alert(`Category "${name}" created successfully!`);
+        
+        // Update the select in Add Product modal
+        const select = document.getElementById('prodCat');
+        const option = document.createElement('option');
+        option.text = name;
+        select.add(option);
+    }
+
+    function previewProductImage(input) {
+        const preview = document.getElementById('previewImg');
+        const hiddenInput = document.getElementById('prodImg');
+        const container = document.getElementById('imagePreview');
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                hiddenInput.value = e.target.result;
+                container.classList.add('border-primary/20');
+                container.classList.remove('border-slate-200');
+                container.querySelector('.text-center').classList.add('hidden');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function triggerCamera() {
+        const fileInput = document.getElementById('prodFile');
+        fileInput.setAttribute('capture', 'environment');
+        fileInput.click();
+        setTimeout(() => fileInput.removeAttribute('capture'), 1000);
+    }
+
+    function handleNewProduct(e) {
+        e.preventDefault();
+        const name = document.getElementById('prodName').value;
+        const cat = document.getElementById('prodCat').value;
+        const price = document.getElementById('prodPrice').value;
+        const img = document.getElementById('prodImg').value || "https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&q=80&w=100&h=100";
+        
+        const sku = `NEW-${Math.floor(Math.random() * 900) + 100}`;
+        
+        // Add to table
+        const tbody = document.querySelector('tbody');
+        const newRow = document.createElement('tr');
+        newRow.className = "hover:bg-slate-50 transition-colors group border-b border-slate-100 animate-in slide-in-from-top duration-300";
+        newRow.innerHTML = `
+            <td class="px-lg py-md">
+                <div class="flex items-center gap-md">
+                    <div class="w-10 h-10 rounded-lg overflow-hidden bg-slate-100">
+                        <img src="${img}" class="w-full h-full object-cover" />
+                    </div>
+                    <div>
+                        <div class="font-semibold text-slate-900">${name}</div>
+                        <div class="text-[11px] text-slate-400">SKU: ${sku}</div>
+                    </div>
+                </div>
+            </td>
+            <td class="px-lg py-md">
+                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[11px] font-bold uppercase tracking-tight">${cat}</span>
+            </td>
+            <td class="px-lg py-md">
+                <div class="text-sm font-semibold">₹${price} <span class="text-slate-400 font-normal">/ unit</span></div>
+            </td>
+            <td class="px-lg py-md">
+                <div class="text-sm">0 units</div>
+                <div class="w-24 h-1 bg-slate-100 rounded-full mt-1 overflow-hidden">
+                    <div class="bg-slate-300 h-full w-[0%]"></div>
+                </div>
+            </td>
+            <td class="px-lg py-md">
+                <span class="inline-flex items-center px-2 py-1 rounded text-label-status bg-slate-200 text-slate-500">OUT OF STOCK</span>
+            </td>
+            <td class="px-lg py-md text-right">
+                <button class="text-slate-400 hover:text-green-600 transition-colors">
+                    <span class="material-symbols-outlined">edit</span>
+                </button>
+            </td>
+        `;
+        tbody.prepend(newRow);
+        
+        // Reset state
+        closeAddProductModal();
+        e.target.reset();
+        document.getElementById('previewImg').classList.add('hidden');
+        document.getElementById('previewImg').src = '';
+        document.getElementById('prodImg').value = '';
+        document.getElementById('imagePreview').querySelector('.text-center').classList.remove('hidden');
+        document.getElementById('imagePreview').classList.remove('border-primary/20');
+        document.getElementById('imagePreview').classList.add('border-slate-200');
+        
+        alert(`${name} added to catalog successfully!`);
+    }
+    let isLoggingDamage = false;
+
+    function toggleDamageLogging(btn) {
+        isLoggingDamage = !isLoggingDamage;
+        const rows = document.querySelectorAll('tbody tr');
+        
+        if (isLoggingDamage) {
+            btn.innerHTML = '<span class="material-symbols-outlined mr-1 text-[18px]">close</span> Cancel Logging';
+            btn.classList.add('bg-red-600', 'text-white');
+            btn.classList.remove('bg-white', 'text-red-600');
+            rows.forEach(row => {
+                row.classList.add('cursor-crosshair', 'bg-red-50/10');
+                row.onclick = () => reportDamage(row);
+            });
+            alert('Damage Logging Mode: Click on any product row to report damage.');
+        } else {
+            btn.innerHTML = '<span class="material-symbols-outlined mr-1 text-[18px]">report_problem</span> Log Damaged Product';
+            btn.classList.remove('bg-red-600', 'text-white');
+            btn.classList.add('bg-white', 'text-red-600');
+            rows.forEach(row => {
+                row.classList.remove('cursor-crosshair', 'bg-red-50/10');
+                row.onclick = null;
+            });
+        }
+    }
+
+    function reportDamage(row) {
+        const nameEl = row.querySelector('.font-semibold');
+        if (!nameEl) return;
+        const name = nameEl.innerText;
+        const qtyEl = row.querySelector('.inventory-qty');
+        const barEl = row.querySelector('.inventory-bar');
+        
+        const damage = prompt(`Log Damage for ${name}\nEnter damaged quantity:`);
+        if (damage && !isNaN(damage)) {
+            const currentQtyStr = qtyEl.innerText;
+            const currentQty = parseInt(currentQtyStr);
+            const unit = currentQtyStr.split(' ').slice(1).join(' ') || '';
+            const newQty = Math.max(0, currentQty - parseInt(damage));
+            
+            qtyEl.innerText = newQty + ' ' + unit;
+            if (barEl) {
+                const currentWidth = parseInt(barEl.style.width) || 0;
+                barEl.style.width = Math.max(5, currentWidth - 15) + '%';
+            }
+            
+            row.classList.add('bg-red-50');
+            setTimeout(() => row.classList.remove('bg-red-50'), 1000);
+            alert(`Logged ${damage} ${unit} damage for ${name}. Inventory updated.`);
+        }
+    }
+</script>
+</body></html>

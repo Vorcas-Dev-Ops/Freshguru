@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Financial Reports - Fresh Guru ERP</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#f3fcef",
+                        "secondary-container": "#d0e1fb",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#002109",
+                        "inverse-surface": "#2a322a",
+                        "outline-variant": "#bccbb9",
+                        "surface-dim": "#d4ddd0",
+                        "surface": "#f3fcef",
+                        "secondary": "#505f76",
+                        "tertiary-container": "#ff8b7c",
+                        "tertiary-fixed": "#ffdad5",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#f3fcef",
+                        "on-secondary-fixed": "#0b1c30",
+                        "surface-container-low": "#edf6ea",
+                        "inverse-primary": "#4ae176",
+                        "primary": "#006e2f",
+                        "surface-variant": "#dce5d9",
+                        "on-surface": "#161d16",
+                        "on-error": "#ffffff",
+                        "surface-container": "#e8f0e4",
+                        "inverse-on-surface": "#ebf3e7",
+                        "secondary-fixed": "#d3e4fe",
+                        "surface-tint": "#006e2f",
+                        "outline": "#6d7b6c",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#3d4a3d",
+                        "primary-container": "#22c55e",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#004b1e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "inter": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { background-color: #f3fcef; }
+    </style>
+</head>
+<body class="font-inter text-sm text-on-surface antialiased">
+    <!-- SideNavBar -->
+    <aside class="fixed left-0 top-0 h-full w-[260px] bg-white border-r border-slate-100 flex flex-col py-4 z-40">
+        <div class="px-6 mb-8 flex items-center gap-2.5" onclick="window.location.href='erp_dashboard.html'" style="cursor: pointer;">
+            <div class="w-10 h-10 bg-emerald-50/80 rounded-xl flex items-center justify-center">
+                <span class="material-symbols-outlined text-[#1a4d2e] text-2xl" style="font-variation-settings: 'wght' 300;">eco</span>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-tighter leading-none logo-font text-[#1a4d2e]">Fresh Guru</h1>
+                <p class="text-[9px] text-slate-400 uppercase tracking-[0.3em] font-bold opacity-60 mt-0.5">ADMIN PORTAL</p>
+            </div>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="flex items-center px-6 py-3 text-slate-500 hover:bg-slate-50 transition-all" href="erp_dashboard.html">
+                <span class="material-symbols-outlined mr-3">dashboard</span>
+                <span class="font-semibold text-sm">Dashboard</span>
+            </a>
+            <a class="flex items-center px-6 py-3 text-slate-500 hover:bg-slate-50 transition-all" href="erp_customers.html">
+                <span class="material-symbols-outlined mr-3">person</span>
+                <span class="font-semibold text-sm">Customers</span>
+            </a>
+            <a class="flex items-center px-6 py-3 text-slate-500 hover:bg-slate-50 transition-all" href="erp_products.html">
+                <span class="material-symbols-outlined mr-3">inventory_2</span>
+                <span class="font-semibold text-sm">Products</span>
+            </a>
+            <a class="flex items-center px-6 py-3 text-slate-500 hover:bg-slate-50 transition-all" href="erp_delivery.html">
+                <span class="material-symbols-outlined mr-3">local_shipping</span>
+                <span class="font-semibold text-sm">Delivery</span>
+            </a>
+            <a class="flex items-center px-6 py-3 text-[#1a4d2e] bg-[#1a4d2e]/5 border-l-4 border-[#1a4d2e]" href="erp_reports.html">
+                <span class="material-symbols-outlined mr-3">assessment</span>
+                <span class="font-semibold text-sm">Reports</span>
+            </a>
+        </nav>
+        <div class="mt-auto px-6 border-t border-outline-variant pt-4 space-y-1">
+            <div class="flex items-center py-2 text-secondary hover:text-on-surface cursor-pointer transition-all duration-200">
+                <span class="material-symbols-outlined mr-3 text-sm">help</span>
+                <span class="text-[13px]">Support</span>
+            </div>
+            <div class="flex items-center py-2 text-error hover:opacity-80 cursor-pointer transition-all duration-200">
+                <span class="material-symbols-outlined mr-3 text-sm">logout</span>
+                <span class="text-[13px]">Logout</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="ml-[260px] min-h-screen">
+        <!-- TopAppBar -->
+        <header class="h-16 bg-white border-b border-slate-200 sticky top-0 z-40 px-6 flex justify-between items-center w-full">
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[#22c55e] text-2xl font-black">eco</span>
+                    <span class="text-xl font-black tracking-tighter" style="color: #22c55e; font-family: 'Outfit', sans-serif;">Fresh Guru</span>
+                </div>
+                <div class="h-6 w-px bg-slate-200 mx-2"></div>
+                <h2 class="font-bold text-lg text-slate-900">Financial Reports</h2>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-bold rounded-lg hover:bg-green-700 transition-all active:scale-95 shadow-sm mr-2">
+                    <span class="material-symbols-outlined text-[20px]">download</span>
+                    Export Excel
+                </button>
+                <button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors cursor-pointer active:opacity-80">
+                    <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors cursor-pointer active:opacity-80">
+                    <span class="material-symbols-outlined">settings</span>
+                </button>
+                <div class="h-8 w-px bg-slate-200 mx-1"></div>
+                <img alt="Admin profile photo" class="h-8 w-8 rounded-full border border-slate-200" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC0vD4oIZ9RHF2wCjHoyEuTGnFaLw_uZzgHmxXsOZycGnN8sHTxbfIPUsx_2GsWAGpc3W4sMX9ImvhmgHb-5mV6ceZ6SwBqMmdRWot308zzgDODGv8rpIiy6a_kPwfSXEieeEvpM1Of431vs4nH1aLpYqYY19oBS1SVZI7e035hCW5miCJlHMY3VrXAhqwU2GH8JahvFr1hFIWawu1fPmA4G2HfHIGXIVqU4aS4XurhKjOwPXFiBrp3h3TDimPt7YC-rbAl4A8gw"/>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="p-8 space-y-8">
+            <div class="flex justify-between items-end">
+                <div>
+                    <h2 class="text-3xl font-black text-on-surface tracking-tight">Financial Reports</h2>
+                    <p class="text-secondary font-medium">Review completed orders, payment methods, and generate invoices.</p>
+                </div>
+                <div class="flex gap-4">
+                    <div class="bg-white p-4 rounded-xl border border-outline-variant shadow-sm flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700">
+                            <span class="material-symbols-outlined">payments</span>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-secondary font-bold uppercase tracking-wider">Total Revenue (MTD)</p>
+                            <p class="text-xl font-black">₹42,85,400</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Filters -->
+            <div class="flex gap-4 items-center p-4 bg-surface-container rounded-2xl border border-outline-variant">
+                <div class="flex flex-col">
+                    <label class="text-[10px] font-black text-secondary uppercase tracking-widest mb-1 ml-1">Date Range</label>
+                    <input type="date" class="bg-white border-outline-variant rounded-lg text-xs font-bold px-3 py-2 outline-none focus:ring-2 focus:ring-primary" value="2026-05-01">
+                </div>
+                <div class="flex flex-col">
+                    <label class="text-[10px] font-black text-secondary uppercase tracking-widest mb-1 ml-1">Payment Method</label>
+                    <select class="bg-white border-outline-variant rounded-lg text-xs font-bold px-3 py-2 outline-none focus:ring-2 focus:ring-primary w-40">
+                        <option>All Methods</option>
+                        <option>Cash</option>
+                        <option>Debit Card</option>
+                        <option>Credit Card</option>
+                        <option>UPI</option>
+                    </select>
+                </div>
+                <button class="mt-auto px-6 py-2.5 bg-on-surface text-white text-xs font-bold rounded-lg hover:opacity-90 transition-opacity">Apply Filters</button>
+            </div>
+
+            <!-- Reports Table -->
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-2xl overflow-hidden shadow-sm">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-surface-container">
+                        <tr>
+                            <th class="px-6 py-4 text-[11px] font-black text-secondary uppercase tracking-widest">Date</th>
+                            <th class="px-6 py-4 text-[11px] font-black text-secondary uppercase tracking-widest">Order ID</th>
+                            <th class="px-6 py-4 text-[11px] font-black text-secondary uppercase tracking-widest">Customer</th>
+                            <th class="px-6 py-4 text-[11px] font-black text-secondary uppercase tracking-widest">Amount</th>
+                            <th class="px-6 py-4 text-[11px] font-black text-secondary uppercase tracking-widest">Payment</th>
+                            <th class="px-6 py-4 text-[11px] font-black text-secondary uppercase tracking-widest text-right">Invoice</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-outline-variant text-xs">
+                        <!-- Report Entry 1 -->
+                        <tr class="hover:bg-surface-container-low transition-colors group">
+                            <td class="px-6 py-5 font-medium text-secondary">05 May, 2026</td>
+                            <td class="px-6 py-5 font-black text-primary cursor-pointer hover:underline" onclick="window.location.href='erp_order_details.html'">#FG-ORD-9830</td>
+                            <td class="px-6 py-5">
+                                <p class="font-bold text-on-surface">Metro Gourmet</p>
+                                <p class="text-[10px] text-secondary">Indiranagar, BLR</p>
+                            </td>
+                            <td class="px-6 py-5 font-black text-primary">₹14,500</td>
+                            <td class="px-6 py-5">
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm text-green-600">payments</span>
+                                    <span class="font-bold">Cash</span>
+                                </span>
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <button onclick="viewInvoice('#FG-ORD-9830')" class="text-primary hover:underline font-black flex items-center justify-end gap-1">
+                                    <span class="material-symbols-outlined text-lg">description</span>
+                                    VIEW
+                                </button>
+                            </td>
+                        </tr>
+                        <!-- Report Entry 2 -->
+                        <tr class="hover:bg-surface-container-low transition-colors group">
+                            <td class="px-6 py-5 font-medium text-secondary">05 May, 2026</td>
+                            <td class="px-6 py-5 font-black text-primary cursor-pointer hover:underline" onclick="window.location.href='erp_order_details.html'">#FG-ORD-9828</td>
+                            <td class="px-6 py-5">
+                                <p class="font-bold text-on-surface">Fresh Mart</p>
+                                <p class="text-[10px] text-secondary">Whitefield, BLR</p>
+                            </td>
+                            <td class="px-6 py-5 font-black text-primary">₹8,920</td>
+                            <td class="px-6 py-5">
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm text-blue-600">credit_card</span>
+                                    <span class="font-bold">Debit Card</span>
+                                </span>
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <button onclick="viewInvoice('#FG-ORD-9828')" class="text-primary hover:underline font-black flex items-center justify-end gap-1">
+                                    <span class="material-symbols-outlined text-lg">description</span>
+                                    VIEW
+                                </button>
+                            </td>
+                        </tr>
+                        <!-- Report Entry 3 -->
+                        <tr class="hover:bg-surface-container-low transition-colors group">
+                            <td class="px-6 py-5 font-medium text-secondary">04 May, 2026</td>
+                            <td class="px-6 py-5 font-black text-primary cursor-pointer hover:underline" onclick="window.location.href='erp_order_details.html'">#FG-ORD-9825</td>
+                            <td class="px-6 py-5">
+                                <p class="font-bold text-on-surface">Green Grocers</p>
+                                <p class="text-[10px] text-secondary">Jayanagar, BLR</p>
+                            </td>
+                            <td class="px-6 py-5 font-black text-primary">₹22,100</td>
+                            <td class="px-6 py-5">
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm text-purple-600">account_balance_wallet</span>
+                                    <span class="font-bold">UPI</span>
+                                </span>
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <button onclick="viewInvoice('#FG-ORD-9825')" class="text-primary hover:underline font-black flex items-center justify-end gap-1">
+                                    <span class="material-symbols-outlined text-lg">description</span>
+                                    VIEW
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Invoice Modal -->
+    <div id="invoiceModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[80vh]">
+            <div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center bg-slate-50">
+                <h3 class="text-lg font-black text-on-surface">Tax Invoice <span id="modalOrderId" class="text-primary ml-2"></span></h3>
+                <div class="flex gap-2">
+                    <button class="p-2 hover:bg-slate-200 rounded-full transition-colors text-secondary"><span class="material-symbols-outlined">print</span></button>
+                    <button onclick="closeInvoice()" class="p-2 hover:bg-slate-200 rounded-full transition-colors text-secondary"><span class="material-symbols-outlined">close</span></button>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto p-10 bg-white" id="invoiceContent">
+                <!-- Sample Invoice Template -->
+                <div class="border-4 border-double border-slate-100 p-8">
+                    <div class="flex justify-between items-start mb-10">
+                        <div>
+                            <h4 class="text-2xl font-black text-green-600 tracking-tighter uppercase">Fresh Guru</h4>
+                            <p class="text-[10px] font-bold text-secondary">Logistics Center, Bangalore, 560001</p>
+                            <p class="text-[10px] font-bold text-secondary">GSTIN: 29AAAAA0000A1Z5</p>
+                        </div>
+                        <div class="text-right">
+                            <h5 class="font-black text-on-surface uppercase tracking-widest text-[11px] mb-1">Bill To</h5>
+                            <p class="font-bold text-sm" id="customerName">Metro Gourmet</p>
+                            <p class="text-[10px] text-secondary">Indiranagar Branch, BLR</p>
+                        </div>
+                    </div>
+                    <table class="w-full text-left border-collapse mb-8">
+                        <thead>
+                            <tr class="border-b-2 border-on-surface">
+                                <th class="py-2 text-[10px] font-black uppercase tracking-widest">Description</th>
+                                <th class="py-2 text-[10px] font-black uppercase tracking-widest text-right">Qty</th>
+                                <th class="py-2 text-[10px] font-black uppercase tracking-widest text-right">Rate</th>
+                                <th class="py-2 text-[10px] font-black uppercase tracking-widest text-right">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr>
+                                <td class="py-3 font-bold">Premium Fuji Apples (10kg Box)</td>
+                                <td class="py-3 text-right">5</td>
+                                <td class="py-3 text-right">₹1,800</td>
+                                <td class="py-3 text-right">₹9,000</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 font-bold">Organic Alphonso Mangoes (Doz)</td>
+                                <td class="py-3 text-right">10</td>
+                                <td class="py-3 text-right">₹550</td>
+                                <td class="py-3 text-right">₹5,500</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="flex justify-end">
+                        <div class="w-64 space-y-2">
+                            <div class="flex justify-between text-[11px] font-bold text-secondary"><span>Subtotal</span><span>₹14,500</span></div>
+                            <div class="flex justify-between text-[11px] font-bold text-secondary"><span>Tax (GST 5%)</span><span>₹725</span></div>
+                            <div class="flex justify-between text-base font-black text-on-surface border-t pt-2"><span>Grand Total</span><span>₹15,225</span></div>
+                        </div>
+                    </div>
+                    <div class="mt-20 text-center border-t border-dashed pt-4">
+                        <p class="text-[10px] font-bold text-secondary">Thank you for business with Fresh Guru!</p>
+                        <p class="text-[10px] font-black text-green-600 mt-1 uppercase tracking-tighter italic">Digitally Verified Document</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function viewInvoice(id) {
+            document.getElementById('modalOrderId').innerText = id;
+            document.getElementById('invoiceModal').classList.remove('hidden');
+        }
+
+        function closeInvoice() {
+            document.getElementById('invoiceModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

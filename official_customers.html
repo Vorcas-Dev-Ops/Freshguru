@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#f3fcef",
+                    "secondary-container": "#d0e1fb",
+                    "surface-container-lowest": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed": "#002109",
+                    "inverse-surface": "#2a322a",
+                    "outline-variant": "#bccbb9",
+                    "surface-dim": "#d4ddd0",
+                    "surface": "#f3fcef",
+                    "secondary": "#505f76",
+                    "tertiary-container": "#ff8b7c",
+                    "tertiary-fixed": "#ffdad5",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f3fcef",
+                    "on-secondary-fixed": "#0b1c30",
+                    "surface-container-low": "#edf6ea",
+                    "inverse-primary": "#4ae176",
+                    "primary": "#006e2f",
+                    "surface-variant": "#dce5d9",
+                    "on-tertiary-fixed": "#410001",
+                    "on-surface": "#161d16",
+                    "on-tertiary-fixed-variant": "#7f2a21",
+                    "on-error": "#ffffff",
+                    "surface-container": "#e8f0e4",
+                    "inverse-on-surface": "#ebf3e7",
+                    "secondary-fixed": "#d3e4fe",
+                    "surface-tint": "#006e2f",
+                    "secondary-fixed-dim": "#b7c8e1",
+                    "on-secondary-fixed-variant": "#38485d",
+                    "surface-container-highest": "#dce5d9",
+                    "surface-container-high": "#e2ebde",
+                    "tertiary": "#9e4036",
+                    "on-secondary-container": "#54647a",
+                    "tertiary-fixed-dim": "#ffb4a9",
+                    "on-background": "#161d16",
+                    "on-tertiary-container": "#76231b",
+                    "primary-fixed-dim": "#4ae176",
+                    "on-primary-fixed-variant": "#005321",
+                    "outline": "#6d7b6c",
+                    "on-primary": "#ffffff",
+                    "on-surface-variant": "#3d4a3d",
+                    "primary-container": "#22c55e",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#6bff8f",
+                    "on-error-container": "#93000a",
+                    "on-primary-container": "#004b1e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "lg": "24px",
+                    "md": "16px",
+                    "sm": "8px",
+                    "xl": "32px",
+                    "sidebar_width": "260px",
+                    "gutter": "20px",
+                    "base": "4px"
+            },
+            "fontFamily": {
+                    "h1": ["Inter"],
+                    "h2": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "kpi-value": ["Inter"],
+                    "body-table": ["Inter"],
+                    "table-header": ["Inter"],
+                    "label-status": ["Inter"]
+            },
+            "fontSize": {
+                    "h1": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "h2": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "kpi-value": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-table": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "table-header": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "label-status": ["12px", {"lineHeight": "12px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-[260px] border-r border-slate-200 bg-white flex flex-col py-4 z-50">
+<div class="px-6 mb-8">
+<h1 class="text-lg font-bold text-slate-900">Fresh Guru</h1>
+<p class="text-[11px] text-slate-500 uppercase tracking-widest font-bold">Wholesale Operations</p>
+</div>
+<nav class="flex-1 space-y-1 px-3">
+<a class="flex items-center px-3 py-2.5 text-slate-600 hover:bg-slate-50 transition-all duration-200 ease-in-out font-inter text-[13px] font-medium rounded" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center px-3 py-2.5 text-green-600 bg-green-50 border-l-4 border-green-600 transition-all duration-200 ease-in-out font-inter text-[13px] font-medium rounded" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="group">group</span>
+                Customers
+            </a>
+<a class="flex items-center px-3 py-2.5 text-slate-600 hover:bg-slate-50 transition-all duration-200 ease-in-out font-inter text-[13px] font-medium rounded" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="local_grocery_store">local_grocery_store</span>
+                Products
+            </a>
+<a class="flex items-center px-3 py-2.5 text-slate-600 hover:bg-slate-50 transition-all duration-200 ease-in-out font-inter text-[13px] font-medium rounded" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="inventory_2">inventory_2</span>
+                Inventory
+            </a>
+<a class="flex items-center px-3 py-2.5 text-slate-600 hover:bg-slate-50 transition-all duration-200 ease-in-out font-inter text-[13px] font-medium rounded" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="receipt_long">receipt_long</span>
+                Orders
+            </a>
+<a class="flex items-center px-3 py-2.5 text-slate-600 hover:bg-slate-50 transition-all duration-200 ease-in-out font-inter text-[13px] font-medium rounded" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="local_shipping">local_shipping</span>
+                Delivery
+            </a>
+<a class="flex items-center px-3 py-2.5 text-slate-600 hover:bg-slate-50 transition-all duration-200 ease-in-out font-inter text-[13px] font-medium rounded" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="description">description</span>
+                Invoices
+            </a>
+<a class="flex items-center px-3 py-2.5 text-slate-600 hover:bg-slate-50 transition-all duration-200 ease-in-out font-inter text-[13px] font-medium rounded" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="payments">payments</span>
+                Payments
+            </a>
+<a class="flex items-center px-3 py-2.5 text-slate-600 hover:bg-slate-50 transition-all duration-200 ease-in-out font-inter text-[13px] font-medium rounded" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="assessment">assessment</span>
+                Reports
+            </a>
+</nav>
+<div class="px-3 mt-auto border-t border-slate-100 pt-4 space-y-1">
+<a class="flex items-center px-3 py-2 text-slate-600 hover:bg-slate-50 transition-all duration-200 ease-in-out font-inter text-[13px] font-medium rounded" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="help">help</span>
+                Support
+            </a>
+<a class="flex items-center px-3 py-2 text-slate-600 hover:bg-slate-50 transition-all duration-200 ease-in-out font-inter text-[13px] font-medium rounded" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="logout">logout</span>
+                Logout
+            </a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 ml-[260px] flex flex-col min-w-0">
+<!-- TopAppBar -->
+<header class="h-16 bg-white border-b border-slate-200 sticky top-0 z-40 px-6 flex justify-between items-center w-full">
+<div class="flex items-center space-x-4">
+<span class="text-xl font-black text-green-600 tracking-tight">Fresh Guru</span>
+<div class="h-6 w-px bg-slate-200 mx-2"></div>
+<h2 class="font-h2 text-h2 text-slate-900">Customer Management</h2>
+</div>
+<div class="flex items-center space-x-3">
+<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="h-8 w-px bg-slate-200 mx-1"></div>
+<button class="bg-primary hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center transition-colors">
+<span class="material-symbols-outlined mr-2 text-[20px]" data-icon="add">add</span>
+                    New Order
+                </button>
+<img alt="Admin profile photo" class="h-8 w-8 rounded-full border border-slate-200" data-alt="A professional headshot of a warehouse administrator in a clean, modern office environment. The lighting is bright and professional, typical of a high-end B2B corporate setting. The background is softly blurred showing a glimpse of a modern warehouse office with green branding elements. He wears a neutral professional shirt, looking directly at the camera with a confident and helpful expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDh7KVpV-uDBM_1k0_Cm7S2vNh2KCjsA1EX-t0VsQS8HUkKJYR8GtT3tJk406Lnp0rNhX37mlsQunknK2HA56YwVbXKwgczpMoQiyvdlVJ0IZ2x4ETet6WIjhxWlCe_iYz8lKx7fkGd2dMah17uU_rJyskcd8LxLgfiU4zBe1E-gvLUdzGrTwi1YPHM73pp9SaP9lF1pFd5SrLvnJpW19iRRRCFGINim3VHooulwWPljI-9dM9YFUniT9T_rMATnGAz8vTjP6FHeA"/>
+</div>
+</header>
+<!-- Page Canvas -->
+<main class="p-6 space-y-6">
+<!-- KPI Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Total Customers -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 flex flex-col">
+<div class="flex items-center justify-between mb-4">
+<span class="text-table-header font-table-header text-slate-500 uppercase">Total Customers</span>
+<span class="material-symbols-outlined text-green-600" data-icon="group">group</span>
+</div>
+<div class="flex items-end justify-between">
+<span class="text-kpi-value font-kpi-value text-slate-900">1,284</span>
+<span class="flex items-center text-xs font-bold text-green-600 mb-2">
+<span class="material-symbols-outlined text-sm mr-1" data-icon="trending_up">trending_up</span>
+                            +12%
+                        </span>
+</div>
+</div>
+<!-- New Requests -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 flex flex-col">
+<div class="flex items-center justify-between mb-4">
+<span class="text-table-header font-table-header text-slate-500 uppercase">New Requests</span>
+<span class="material-symbols-outlined text-amber-500" data-icon="pending_actions">pending_actions</span>
+</div>
+<div class="flex items-end justify-between">
+<span class="text-kpi-value font-kpi-value text-slate-900">42</span>
+<span class="flex items-center text-xs font-bold text-amber-500 mb-2">
+                            Pending Approval
+                        </span>
+</div>
+</div>
+<!-- Active Credit Users -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 flex flex-col">
+<div class="flex items-center justify-between mb-4">
+<span class="text-table-header font-table-header text-slate-500 uppercase">Active Credit Users</span>
+<span class="material-symbols-outlined text-blue-600" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<div class="flex items-end justify-between">
+<span class="text-kpi-value font-kpi-value text-slate-900">892</span>
+<span class="flex items-center text-xs font-bold text-blue-600 mb-2">
+                            70% of Base
+                        </span>
+</div>
+</div>
+</section>
+<!-- Main Content Area -->
+<section class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+<!-- Filters & Actions Header -->
+<div class="px-6 py-4 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center space-x-1 bg-slate-50 p-1 rounded-lg">
+<button class="px-4 py-1.5 text-sm font-semibold text-green-700 bg-white shadow-sm rounded-md transition-all">All</button>
+<button class="px-4 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-md transition-all">Pending Approval</button>
+<button class="px-4 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-md transition-all">Active</button>
+<button class="px-4 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-md transition-all">Blocked</button>
+</div>
+<div class="flex items-center space-x-2">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none w-64" placeholder="Search customers..." type="text"/>
+</div>
+<button class="p-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50">
+<span class="material-symbols-outlined" data-icon="filter_list">filter_list</span>
+</button>
+</div>
+</div>
+<!-- Customer Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-slate-50">
+<tr>
+<th class="px-6 py-3 text-table-header font-table-header text-slate-500 uppercase tracking-wider">Customer Name</th>
+<th class="px-6 py-3 text-table-header font-table-header text-slate-500 uppercase tracking-wider">Business Type</th>
+<th class="px-6 py-3 text-table-header font-table-header text-slate-500 uppercase tracking-wider">Location</th>
+<th class="px-6 py-3 text-table-header font-table-header text-slate-500 uppercase tracking-wider">Status</th>
+<th class="px-6 py-3 text-table-header font-table-header text-slate-500 uppercase tracking-wider text-right">Credit Limit (₹)</th>
+<th class="px-6 py-3 text-table-header font-table-header text-slate-500 uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<!-- Row 1 -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="h-9 w-9 rounded bg-green-100 text-green-700 flex items-center justify-center font-bold text-sm mr-3">SK</div>
+<div>
+<div class="font-semibold text-slate-900 text-body-table font-body-table">Sai Kirana Store</div>
+<div class="text-xs text-slate-500">ID: FG-40291</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-body-table font-body-table text-slate-600">Retail Grocery</td>
+<td class="px-6 py-4 whitespace-nowrap text-body-table font-body-table text-slate-600">Mumbai, MH</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2.5 py-0.5 rounded-full text-label-status font-label-status bg-green-100 text-green-700">ACTIVE</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-body-table font-body-table text-slate-900 text-right font-medium">₹ 5,00,000</td>
+<td class="px-6 py-4 whitespace-nowrap text-right space-x-2">
+<button class="text-blue-600 hover:text-blue-800 text-xs font-semibold uppercase tracking-wider">Edit Credit</button>
+</td>
+</tr>
+<!-- Row 2 (Pending) -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="h-9 w-9 rounded bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm mr-3">OM</div>
+<div>
+<div class="font-semibold text-slate-900 text-body-table font-body-table">Organic Mart</div>
+<div class="text-xs text-slate-500">ID: FG-99120</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-body-table font-body-table text-slate-600">Specialty Retail</td>
+<td class="px-6 py-4 whitespace-nowrap text-body-table font-body-table text-slate-600">Bangalore, KA</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2.5 py-0.5 rounded-full text-label-status font-label-status bg-amber-100 text-amber-700">UNDER PROCESS</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-body-table font-body-table text-slate-900 text-right font-medium">—</td>
+<td class="px-6 py-4 whitespace-nowrap text-right flex justify-end space-x-2">
+<button class="px-3 py-1 bg-green-600 text-white rounded text-xs font-bold hover:bg-green-700 transition-colors">APPROVE</button>
+<button class="px-3 py-1 border border-error text-error rounded text-xs font-bold hover:bg-error-container transition-colors">REJECT</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="h-9 w-9 rounded bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-sm mr-3">RF</div>
+<div>
+<div class="font-semibold text-slate-900 text-body-table font-body-table">Royal Foods Co.</div>
+<div class="text-xs text-slate-500">ID: FG-11822</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-body-table font-body-table text-slate-600">Restaurant Chain</td>
+<td class="px-6 py-4 whitespace-nowrap text-body-table font-body-table text-slate-600">Delhi, DL</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2.5 py-0.5 rounded-full text-label-status font-label-status bg-blue-100 text-blue-700">APPROVED</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-body-table font-body-table text-slate-900 text-right font-medium">₹ 12,50,000</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">
+<button class="text-blue-600 hover:text-blue-800 text-xs font-semibold uppercase tracking-wider">Edit Credit</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="h-9 w-9 rounded bg-red-100 text-red-700 flex items-center justify-center font-bold text-sm mr-3">HT</div>
+<div>
+<div class="font-semibold text-slate-900 text-body-table font-body-table">Hotel Taj Mahal</div>
+<div class="text-xs text-slate-500">ID: FG-88211</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-body-table font-body-table text-slate-600">Hospitality</td>
+<td class="px-6 py-4 whitespace-nowrap text-body-table font-body-table text-slate-600">Pune, MH</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2.5 py-0.5 rounded-full text-label-status font-label-status bg-red-100 text-red-700">INACTIVE</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-body-table font-body-table text-slate-900 text-right font-medium">₹ 2,00,000</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">
+<button class="text-blue-600 hover:text-blue-800 text-xs font-semibold uppercase tracking-wider">Edit Credit</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
+<span class="text-xs text-slate-500">Showing 1-4 of 1,284 customers</span>
+<div class="flex space-x-1">
+<button class="p-1 border border-slate-200 rounded hover:bg-slate-50 disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="p-1 px-2.5 text-xs font-bold bg-green-600 text-white rounded">1</button>
+<button class="p-1 px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-50 rounded">2</button>
+<button class="p-1 px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-50 rounded">3</button>
+<button class="p-1 border border-slate-200 rounded hover:bg-slate-50">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Recent Approval Activity -->
+<section class="pb-6">
+<div class="bg-white p-6 rounded-xl border border-slate-200">
+<h3 class="text-h2 font-h2 text-slate-900 mb-4 flex items-center">
+<span class="material-symbols-outlined mr-2 text-green-600" data-icon="history">history</span>
+                        Recent Approval History
+                    </h3>
+<div class="space-y-4">
+<div class="flex items-start pb-4 border-b border-slate-100">
+<div class="h-8 w-8 rounded-full bg-green-50 flex items-center justify-center mr-3 mt-1">
+<span class="material-symbols-outlined text-green-600 text-[18px]" data-icon="check_circle">check_circle</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-slate-900">Green Valley Mart</p>
+<p class="text-xs text-slate-500">Approved for ₹ 3,00,000 credit limit by Admin</p>
+<p class="text-[10px] text-slate-400 mt-1 uppercase font-bold">2 Hours Ago</p>
+</div>
+</div>
+<div class="flex items-start pb-4 border-b border-slate-100">
+<div class="h-8 w-8 rounded-full bg-red-50 flex items-center justify-center mr-3 mt-1">
+<span class="material-symbols-outlined text-red-600 text-[18px]" data-icon="cancel">cancel</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-slate-900">City Bakers &amp; Sweets</p>
+<p class="text-xs text-slate-500">Registration rejected due to missing GST profile</p>
+<p class="text-[10px] text-slate-400 mt-1 uppercase font-bold">5 Hours Ago</p>
+</div>
+</div>
+<button class="w-full py-2 text-xs font-bold text-slate-500 hover:text-green-600 uppercase tracking-widest transition-colors">View All Logs</button>
+</div>
+</div>
+</section>
+</main>
+</div>
+</body></html>

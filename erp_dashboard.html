@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#f3fcef",
+                        "secondary-container": "#d0e1fb",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#002109",
+                        "inverse-surface": "#2a322a",
+                        "outline-variant": "#bccbb9",
+                        "surface-dim": "#d4ddd0",
+                        "surface": "#f3fcef",
+                        "secondary": "#505f76",
+                        "tertiary-container": "#ff8b7c",
+                        "tertiary-fixed": "#ffdad5",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#f3fcef",
+                        "on-secondary-fixed": "#0b1c30",
+                        "surface-container-low": "#edf6ea",
+                        "inverse-primary": "#4ae176",
+                        "primary": "#006e2f",
+                        "surface-variant": "#dce5d9",
+                        "on-tertiary-fixed": "#410001",
+                        "on-surface": "#161d16",
+                        "on-tertiary-fixed-variant": "#7f2a21",
+                        "on-error": "#ffffff",
+                        "surface-container": "#e8f0e4",
+                        "inverse-on-surface": "#ebf3e7",
+                        "secondary-fixed": "#d3e4fe",
+                        "surface-tint": "#006e2f",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "surface-container-highest": "#dce5d9",
+                        "surface-container-high": "#e2ebde",
+                        "tertiary": "#9e4036",
+                        "on-secondary-container": "#54647a",
+                        "tertiary-fixed-dim": "#ffb4a9",
+                        "on-background": "#161d16",
+                        "on-tertiary-container": "#76231b",
+                        "primary-fixed-dim": "#4ae176",
+                        "on-primary-fixed-variant": "#005321",
+                        "outline": "#6d7b6c",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#3d4a3d",
+                        "primary-container": "#22c55e",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed": "#6bff8f",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#004b1e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "sm": "8px",
+                        "xl": "32px",
+                        "sidebar_width": "260px",
+                        "gutter": "20px",
+                        "base": "4px"
+                    },
+                    "fontFamily": {
+                        "h1": ["Inter"],
+                        "h2": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "kpi-value": ["Inter"],
+                        "body-table": ["Inter"],
+                        "table-header": ["Inter"],
+                        "label-status": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h1": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "h2": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "kpi-value": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-table": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "table-header": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "label-status": ["12px", {"lineHeight": "12px", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { background-color: #f3fcef; }
+        .logo-font { font-family: 'Outfit', sans-serif; }
+        .text-bottle { color: #1a4d2e; }
+        .bg-bottle { background-color: #1a4d2e; }
+    </style>
+</head>
+<body class="font-body-sm text-on-surface antialiased">
+    <!-- SideNavBar -->
+    <aside class="fixed left-0 top-0 h-full w-[260px] bg-white border-r border-slate-100 flex flex-col py-4 z-40">
+        <div class="px-6 mb-8 flex items-center gap-2.5" onclick="window.location.href='erp_dashboard.html'" style="cursor: pointer;">
+            <div class="w-10 h-10 bg-emerald-50/80 rounded-xl flex items-center justify-center">
+                <span class="material-symbols-outlined text-[#1a4d2e] text-2xl" style="font-variation-settings: 'wght' 300;">eco</span>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-tighter leading-none logo-font text-[#1a4d2e]">Fresh Guru</h1>
+                <p class="text-[9px] text-slate-400 uppercase tracking-[0.3em] font-bold opacity-60 mt-0.5">ADMIN PORTAL</p>
+            </div>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="flex items-center px-6 py-3 text-[#1a4d2e] bg-[#1a4d2e]/5 border-l-4 border-[#1a4d2e]" href="erp_dashboard.html">
+                <span class="material-symbols-outlined mr-3">dashboard</span>
+                <span class="font-semibold text-sm">Dashboard</span>
+            </a>
+            <a class="flex items-center px-6 py-3 text-slate-500 hover:bg-slate-50 transition-all" href="erp_customers.html">
+                <span class="material-symbols-outlined mr-3">person</span>
+                <span class="font-semibold text-sm">Customers</span>
+            </a>
+            <a class="flex items-center px-6 py-3 text-slate-500 hover:bg-slate-50 transition-all" href="erp_products.html">
+                <span class="material-symbols-outlined mr-3">inventory_2</span>
+                <span class="font-semibold text-sm">Products</span>
+            </a>
+            <a class="flex items-center px-6 py-3 text-slate-500 hover:bg-slate-50 transition-all" href="erp_delivery.html">
+                <span class="material-symbols-outlined mr-3">local_shipping</span>
+                <span class="font-semibold text-sm">Delivery</span>
+            </a>
+            <a class="flex items-center px-6 py-3 text-slate-500 hover:bg-slate-50 transition-all" href="erp_reports.html">
+                <span class="material-symbols-outlined mr-3">assessment</span>
+                <span class="font-semibold text-sm">Reports</span>
+            </a>
+        </nav>
+        <div class="mt-auto px-6 border-t border-outline-variant pt-4 space-y-1">
+            <div class="flex items-center py-2 text-secondary hover:text-on-surface cursor-pointer transition-all duration-200">
+                <span class="material-symbols-outlined mr-3 text-sm">help</span>
+                <span class="text-[13px]">Support</span>
+            </div>
+            <div class="flex items-center py-2 text-error hover:opacity-80 cursor-pointer transition-all duration-200">
+                <span class="material-symbols-outlined mr-3 text-sm">logout</span>
+                <span class="text-[13px]">Logout</span>
+            </div>
+        </div>
+    </aside>
+<!-- Main Content Area -->
+<main class="ml-[260px] min-h-screen">
+        <!-- TopAppBar -->
+        <header class="h-16 bg-white border-b border-slate-200 sticky top-0 z-40 px-6 flex justify-between items-center w-full">
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[#22c55e] text-2xl font-black">eco</span>
+                    <span class="text-xl font-black tracking-tighter" style="color: #22c55e; font-family: 'Outfit', sans-serif;">Fresh Guru</span>
+                </div>
+                <div class="h-6 w-px bg-slate-200 mx-2"></div>
+                <h2 class="font-bold text-lg text-slate-900">Admin Dashboard</h2>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors cursor-pointer active:opacity-80">
+                    <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors cursor-pointer active:opacity-80">
+                    <span class="material-symbols-outlined">settings</span>
+                </button>
+                <div class="h-8 w-px bg-slate-200 mx-1"></div>
+                <img alt="Admin profile photo" class="h-8 w-8 rounded-full border border-slate-200" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC0vD4oIZ9RHF2wCjHoyEuTGnFaLw_uZzgHmxXsOZycGnN8sHTxbfIPUsx_2GsWAGpc3W4sMX9ImvhmgHb-5mV6ceZ6SwBqMmdRWot308zzgDODGv8rpIiy6a_kPwfSXEieeEvpM1Of431vs4nH1aLpYqYY19oBS1SVZI7e035hCW5miCJlHMY3VrXAhqwU2GH8JahvFr1hFIWawu1fPmA4G2HfHIGXIVqU4aS4XurhKjOwPXFiBrp3h3TDimPt7YC-rbAl4A8gw"/>
+            </div>
+        </header>
+<!-- Page Content -->
+<div class="p-lg space-y-lg">
+<!-- Quick Actions Bento -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <!-- Add Product -->
+    <div class="bg-white p-3 border border-green-100 rounded-xl flex items-center gap-3 hover:border-green-500 hover:shadow-lg hover:shadow-green-50 transition-all cursor-pointer group hover:-translate-y-1 active:scale-95" onclick="window.location.href='erp_products.html'">
+        <div class="w-9 h-9 rounded-lg bg-green-50 text-green-600 flex items-center justify-center group-hover:bg-green-600 group-hover:text-white transition-all shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">add_box</span>
+        </div>
+        <div>
+            <p class="font-bold text-slate-900 text-[13px]">Add Product</p>
+            <p class="text-[10px] text-slate-500 font-medium">Update inventory</p>
+        </div>
+    </div>
+    
+    <!-- Approve Customers -->
+    <div class="bg-white p-3 border border-blue-100 rounded-xl flex items-center gap-3 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-50 transition-all cursor-pointer group hover:-translate-y-1 active:scale-95" onclick="window.location.href='erp_customers.html'">
+        <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">person_check</span>
+        </div>
+        <div>
+            <p class="font-bold text-slate-900 text-[13px]">Approve Customers</p>
+            <p class="text-[10px] text-slate-500 font-medium">6 new applications</p>
+        </div>
+    </div>
+
+    <!-- Approve Orders -->
+    <div class="bg-white p-3 border border-orange-100 rounded-xl flex items-center gap-3 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-50 transition-all cursor-pointer group hover:-translate-y-1 active:scale-95" onclick="window.location.href='erp_orders.html'">
+        <div class="w-9 h-9 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center group-hover:bg-orange-600 group-hover:text-white transition-all shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">order_approve</span>
+        </div>
+        <div>
+            <p class="font-bold text-slate-900 text-[13px]">Approve Orders</p>
+            <p class="text-[10px] text-slate-500 font-medium">18 pending verification</p>
+        </div>
+    </div>
+
+    <!-- Assign Driver -->
+    <div class="bg-white p-3 border border-purple-100 rounded-xl flex items-center gap-3 hover:border-purple-500 hover:shadow-lg hover:shadow-purple-50 transition-all cursor-pointer group hover:-translate-y-1 active:scale-95" onclick="window.location.href='erp_delivery.html'">
+        <div class="w-9 h-9 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-all shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">local_shipping</span>
+        </div>
+        <div>
+            <p class="font-bold text-slate-900 text-[13px]">Assign Driver</p>
+            <p class="text-[10px] text-slate-500 font-medium">42 ready to dispatch</p>
+        </div>
+    </div>
+</section>
+<!-- KPI Row -->
+<section class="grid grid-cols-1 md:grid-cols-5 gap-md">
+<div class="bg-surface-container-lowest p-md border border-outline-variant rounded-xl">
+<p class="text-table-header text-secondary mb-2">TODAY'S REVENUE</p>
+<div class="flex items-end justify-between">
+<h3 class="text-kpi-value font-kpi-value text-on-surface">₹1,45,200</h3>
+<span class="text-[12px] font-bold text-primary flex items-center">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span> 12%
+                        </span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md border border-outline-variant rounded-xl">
+<p class="text-table-header text-secondary mb-2">TOTAL ORDERS</p>
+<div class="flex items-end justify-between">
+<h3 class="text-kpi-value font-kpi-value text-on-surface">124</h3>
+<span class="text-[12px] font-bold text-secondary">Today</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md border border-outline-variant rounded-xl">
+<p class="text-table-header text-secondary mb-2">PENDING APPROVALS</p>
+<div class="flex items-end justify-between">
+<h3 class="text-kpi-value font-kpi-value text-tertiary">18</h3>
+<span class="text-[12px] font-bold text-tertiary">Urgent</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md border border-outline-variant rounded-xl">
+<p class="text-table-header text-secondary mb-2">ACTIVE DELIVERIES</p>
+<div class="flex items-end justify-between">
+<h3 class="text-kpi-value font-kpi-value text-on-surface">42</h3>
+<span class="text-[12px] font-bold text-primary flex items-center">Live</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md border border-outline-variant rounded-xl bg-error/5 border-error/20">
+<p class="text-table-header text-error mb-2">LOW STOCK ALERTS</p>
+<div class="flex items-end justify-between">
+<h3 class="text-kpi-value font-kpi-value text-error">5</h3>
+<span class="material-symbols-outlined text-error" data-icon="warning">warning</span>
+</div>
+</div>
+</section>
+<!-- Main Dashboard Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <!-- Revenue Trends (2/3) -->
+    <div class="lg:col-span-2 bg-white border border-slate-200 rounded-3xl p-8 flex flex-col h-[480px] shadow-sm">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h2 class="text-xl font-bold text-slate-900 tracking-tight">Revenue Trends</h2>
+                <p class="text-xs text-slate-400 font-semibold uppercase tracking-widest mt-1">Weekly Performance Overview</p>
+            </div>
+            <div class="flex bg-slate-50 p-1 rounded-xl">
+                <button onclick="switchRevenueRange(this, 'week')" class="px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg bg-bottle shadow-sm text-white transition-all">Week</button>
+                <button onclick="switchRevenueRange(this, 'month')" class="px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg text-slate-400 hover:text-slate-600 transition-all">Month</button>
+                <button onclick="switchRevenueRange(this, 'year')" class="px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg text-slate-400 hover:text-slate-600 transition-all">Year</button>
+            </div>
+        </div>
+
+        <div class="flex-1 relative overflow-hidden">
+            <!-- Grid Lines -->
+            <div class="absolute inset-0 flex flex-col justify-between pt-4 pb-12 opacity-[0.03] pointer-events-none">
+                <div class="border-b border-slate-900"></div>
+                <div class="border-b border-slate-900"></div>
+                <div class="border-b border-slate-900"></div>
+                <div class="border-b border-slate-900"></div>
+                <div class="border-b border-slate-900"></div>
+            </div>
+            
+            <!-- SVG Chart -->
+            <div class="absolute inset-0 flex items-end justify-between px-2 pt-10 pb-12">
+                <svg id="revenueChart" class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+                    <path id="revenueChartPath" d="M 0 75 L 15 60 L 25 65 L 45 40 L 65 55 L 85 20 L 100 35" fill="none" stroke="#1a4d2e" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" class="transition-all duration-700 ease-in-out"></path>
+                </svg>
+            </div>
+            
+            <!-- X-Axis -->
+            <div id="chartLabels" class="absolute bottom-2 w-full flex justify-between px-6 text-[10px] font-semibold text-slate-400 uppercase tracking-[0.2em]">
+                <span>Mon</span>
+                <span>Tue</span>
+                <span>Wed</span>
+                <span>Thu</span>
+                <span>Fri</span>
+                <span>Sat</span>
+                <span>Sun</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Activity (1/3) -->
+    <div class="lg:col-span-1 bg-white border border-slate-200 rounded-3xl flex flex-col h-[480px] shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
+            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Live Activity</h2>
+            <button class="w-8 h-8 flex items-center justify-center text-slate-300 hover:text-slate-500 transition-all">
+                <span class="material-symbols-outlined text-[20px]">refresh</span>
+            </button>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+            <!-- Delivered -->
+            <div class="flex gap-4 items-start group cursor-pointer" onclick="window.location.href='erp_order_details.html'">
+                <div class="w-2 h-2 rounded-full bg-blue-500 mt-2 group-hover:scale-125 transition-transform"></div>
+                <div class="flex-1 border-b border-slate-50 pb-4">
+                    <div class="flex justify-between items-start mb-0.5">
+                        <p class="font-bold text-slate-900 text-sm">Order #FG-9842</p>
+                        <span class="text-[10px] px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 font-black uppercase tracking-wider">Delivered</span>
+                    </div>
+                    <p class="text-[12px] text-slate-500">Aman Gupta • 12 items</p>
+                    <p class="text-[10px] text-slate-300 font-bold mt-1 uppercase">2 mins ago</p>
+                </div>
+            </div>
+
+            <!-- Packed -->
+            <div class="flex gap-4 items-start group cursor-pointer" onclick="window.location.href='erp_order_details.html'">
+                <div class="w-2 h-2 rounded-full bg-orange-500 mt-2 group-hover:scale-125 transition-transform"></div>
+                <div class="flex-1 border-b border-slate-50 pb-4">
+                    <div class="flex justify-between items-start mb-0.5">
+                        <p class="font-bold text-slate-900 text-sm">Order #FG-9845</p>
+                        <span class="text-[10px] px-2 py-0.5 rounded-md bg-orange-50 text-orange-600 font-black uppercase tracking-wider">Packed</span>
+                    </div>
+                    <p class="text-[12px] text-slate-500">Star Retailers • 45 items</p>
+                    <p class="text-[10px] text-slate-300 font-bold mt-1 uppercase">15 mins ago</p>
+                </div>
+            </div>
+
+            <!-- Approved -->
+            <div class="flex gap-4 items-start group cursor-pointer" onclick="window.location.href='erp_order_details.html'">
+                <div class="w-2 h-2 rounded-full bg-[#22c55e] mt-2 group-hover:scale-125 transition-transform"></div>
+                <div class="flex-1 border-b border-slate-50 pb-4">
+                    <div class="flex justify-between items-start mb-0.5">
+                        <p class="font-bold text-slate-900 text-sm">Order #FG-9848</p>
+                        <span class="text-[10px] px-2 py-0.5 rounded-md bg-green-50 text-[#22c55e] font-black uppercase tracking-wider">Approved</span>
+                    </div>
+                    <p class="text-[12px] text-slate-500">Fresh Mart • 8 items</p>
+                    <p class="text-[10px] text-slate-300 font-bold mt-1 uppercase">32 mins ago</p>
+                </div>
+            </div>
+
+            <!-- Out for Delivery -->
+            <div class="flex gap-4 items-start group cursor-pointer" onclick="window.location.href='erp_delivery.html'">
+                <div class="w-2 h-2 rounded-full bg-purple-500 mt-2 group-hover:scale-125 transition-transform"></div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-start mb-0.5">
+                        <p class="font-bold text-slate-900 text-sm">Order #FG-9852</p>
+                        <span class="text-[10px] px-2 py-0.5 rounded-md bg-purple-50 text-purple-600 font-black uppercase tracking-wider">Out for Delivery</span>
+                    </div>
+                    <p class="text-[12px] text-slate-500">Nature's Basket • 15 items</p>
+                    <p class="text-[10px] text-slate-300 font-bold mt-1 uppercase">1h ago</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 bg-slate-50/50 border-t border-slate-100 text-center rounded-b-3xl">
+            <button class="text-bottle font-bold text-[11px] uppercase tracking-[0.2em] hover:underline">View All Activities</button>
+        </div>
+    </div>
+</div>
+</div>
+<!-- Detailed Inventory Overview -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl">
+<div class="p-lg border-b border-outline-variant flex justify-between items-center">
+<h2 class="text-h2 font-h2 text-on-surface">Recent Inventory Moves</h2>
+<button class="text-secondary hover:text-on-surface flex items-center gap-1 text-sm font-medium">
+                        View Inventory <span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container">
+<tr>
+<th class="px-lg py-sm text-table-header text-secondary uppercase tracking-wider">Product</th>
+<th class="px-lg py-sm text-table-header text-secondary uppercase tracking-wider">Category</th>
+<th class="px-lg py-sm text-table-header text-secondary uppercase tracking-wider">Stock Level</th>
+<th class="px-lg py-sm text-table-header text-secondary uppercase tracking-wider">Price (Wholesale)</th>
+<th class="px-lg py-sm text-table-header text-secondary uppercase tracking-wider">Status</th>
+<th class="px-lg py-sm text-table-header text-secondary uppercase tracking-wider">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-lg py-md flex items-center gap-3">
+<div class="w-10 h-10 bg-surface-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="restaurant">restaurant</span>
+</div>
+<span class="font-semibold text-on-surface">Organic Roma Tomatoes</span>
+</td>
+<td class="px-lg py-md"><span class="px-2 py-1 rounded bg-surface-container text-secondary text-[11px] font-bold">Vegetables</span></td>
+<td class="px-lg py-md text-body-table">450 kg</td>
+<td class="px-lg py-md text-body-table">₹45/kg</td>
+<td class="px-lg py-md">
+<span class="text-label-status px-2 py-0.5 rounded bg-primary/10 text-primary uppercase">In Stock</span>
+</td>
+<td class="px-lg py-md">
+<span class="material-symbols-outlined text-secondary cursor-pointer hover:text-primary" data-icon="more_vert">more_vert</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-lg py-md flex items-center gap-3">
+<div class="w-10 h-10 bg-surface-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="nutrition">nutrition</span>
+</div>
+<span class="font-semibold text-on-surface">Alphonso Mangoes</span>
+</td>
+<td class="px-lg py-md"><span class="px-2 py-1 rounded bg-surface-container text-secondary text-[11px] font-bold">Fruits</span></td>
+<td class="px-lg py-md text-body-table text-error font-semibold">12 crates</td>
+<td class="px-lg py-md text-body-table">₹1200/crate</td>
+<td class="px-lg py-md">
+<span class="text-label-status px-2 py-0.5 rounded bg-error/10 text-error uppercase">Low Stock</span>
+</td>
+<td class="px-lg py-md">
+<span class="material-symbols-outlined text-secondary cursor-pointer hover:text-primary" data-icon="more_vert">more_vert</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-lg py-md flex items-center gap-3">
+<div class="w-10 h-10 bg-surface-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="egg">egg</span>
+</div>
+<span class="font-semibold text-on-surface">Farm Fresh Eggs (30pk)</span>
+</td>
+<td class="px-lg py-md"><span class="px-2 py-1 rounded bg-surface-container text-secondary text-[11px] font-bold">Dairy</span></td>
+<td class="px-lg py-md text-body-table">85 units</td>
+<td class="px-lg py-md text-body-table">₹180/unit</td>
+<td class="px-lg py-md">
+<span class="text-label-status px-2 py-0.5 rounded bg-primary/10 text-primary uppercase">In Stock</span>
+</td>
+<td class="px-lg py-md">
+<span class="material-symbols-outlined text-secondary cursor-pointer hover:text-primary" data-icon="more_vert">more_vert</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</main>
+<script>
+        function switchRevenueRange(btn, range) {
+            // Update active state of buttons
+            const buttons = btn.parentElement.querySelectorAll('button');
+            buttons.forEach(b => {
+                b.classList.remove('bg-bottle', 'shadow-sm', 'text-white');
+                b.classList.add('text-slate-400');
+            });
+            btn.classList.add('bg-bottle', 'shadow-sm', 'text-white');
+            btn.classList.remove('text-slate-400');
+
+            const chartPath = document.querySelector('#revenueChartPath');
+            const labels = document.querySelector('#chartLabels');
+            const subtext = document.querySelector('#chartSubtext');
+
+            // Simulate chart data and label updates
+            if (range === 'week') {
+                chartPath.setAttribute('d', 'M 0 75 L 15 60 L 25 65 L 45 40 L 65 55 L 85 20 L 100 35');
+                labels.innerHTML = '<span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>';
+                subtext.innerText = 'Weekly sales performance';
+            } else if (range === 'month') {
+                chartPath.setAttribute('d', 'M 0 80 L 10 70 L 20 75 L 30 50 L 40 60 L 50 30 L 60 45 L 70 20 L 80 40 L 90 10 L 100 25');
+                labels.innerHTML = '<span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Week 4</span>';
+                subtext.innerText = 'Monthly sales performance';
+            } else if (range === 'year') {
+                chartPath.setAttribute('d', 'M 0 90 L 25 70 L 50 85 L 75 40 L 100 60');
+                labels.innerHTML = '<span>Q1</span><span>Q2</span><span>Q3</span><span>Q4</span>';
+                subtext.innerText = 'Annual sales performance';
+            }
+            
+            // Add a small bounce effect to the path
+            chartPath.style.transform = 'scaleY(1.02)';
+            setTimeout(() => {
+                chartPath.style.transform = 'scaleY(1)';
+            }, 200);
+        }
+    </script>
+</body>
+</html>
