@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+
+# vite
+.vite/
+
+# env files
+.env
+backend/.env
+
+# logs
+logs
+*.log
+
+node_modules/
+.vite/
+backend/.env
+.env
+
+# build
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db

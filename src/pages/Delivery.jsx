@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Plus, 
   Truck, 
@@ -17,22 +17,59 @@ import {
   Clock,
   Users
 } from 'lucide-react';
-
 const Delivery = () => {
   const [activeTab, setActiveTab] = useState('Pending Dispatch');
   const [showAddDriver, setShowAddDriver] = useState(false);
   const [driverStep, setDriverStep] = useState(1);
   const [openDropdownId, setOpenDropdownId] = useState(null);
-  const [drivers, setDrivers] = useState([
-    { id: 'd1', name: 'Rajesh Kumar', status: 'Active', vehicle: 'Mini Truck', contact: '+91 98765 43210', orders: 124, rating: 4.8 },
-    { id: 'd2', name: 'Suresh Raina', status: 'Active', vehicle: 'EV Three-Wheeler', contact: '+91 87654 32109', orders: 89, rating: 4.5 },
-    { id: 'd3', name: 'Amit Shah', status: 'Inactive', vehicle: 'Mini Truck', contact: '+91 76543 21098', orders: 45, rating: 4.2 },
-    { id: 'd4', name: 'Vikram Singh', status: 'Active', vehicle: 'EV Three-Wheeler', contact: '+91 65432 10987', orders: 210, rating: 4.9 },
-  ]);
+  const [drivers, setDrivers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [driverForm, setDriverForm] = useState({
+    name: '', vehicle: 'Mini Truck', contact: '', username: '', password: '', imageUrl: ''
+  });
   const [orders, setOrders] = useState([
     { id: '#FG-ORD-9840', customer: 'Metro Gourmet', location: 'Indiranagar, Bangalore', time: '2h ago', status: 'Ready', driver: '', items: 7, totalAmount: 4250, paymentStatus: 'Pending', points: 42 },
     { id: '#FG-ORD-9845', customer: 'Star Retailers', location: 'Koramangala, Bangalore', time: '4h ago', status: 'Ready', driver: '', items: 3, totalAmount: 1200, paymentStatus: 'Pending', points: 12 },
   ]);
+
+  const API_URL = 'http://localhost:5055/api/drivers';
+
+  useEffect(() => {
+    fetchDrivers();
+  }, []);
+
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('admin_token');
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+  };
+
+  const fetchDrivers = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(API_URL);
+      if (response.ok) {
+        const data = await response.json();
+        const mapped = data.map(d => ({
+          id: d.id,
+          driver_id: d.driver_id,
+          name: d.name,
+          status: d.status,
+          vehicle: d.vehicle,
+          contact: d.contact,
+          orders: d.total_orders,
+          rating: parseFloat(d.rating)
+        }));
+        setDrivers(mapped);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const [isAssignMode, setIsAssignMode] = useState(false);
   const [selectedDriverId, setSelectedDriverId] = useState('');
@@ -306,13 +343,27 @@ const Delivery = () => {
                         </div>
                         <div>
                           <p className="font-black text-slate-900 text-sm">{driver.name}</p>
-                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">ID: {driver.id.toUpperCase()}</p>
+                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">ID: {driver.driver_id}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-6">
                       <button 
-                        onClick={() => setDrivers(prev => prev.map(d => d.id === driver.id ? { ...d, status: d.status === 'Active' ? 'Inactive' : 'Active' } : d))}
+                        onClick={async () => {
+                          const newStatus = driver.status === 'Active' ? 'Inactive' : 'Active';
+                          try {
+                            const res = await fetch(`${API_URL}/${driver.id}/status`, {
+                              method: 'PUT',
+                              headers: getAuthHeaders(),
+                              body: JSON.stringify({ status: newStatus })
+                            });
+                            if (res.ok) {
+                              setDrivers(prev => prev.map(d => d.id === driver.id ? { ...d, status: newStatus } : d));
+                            }
+                          } catch (err) {
+                            console.error(err);
+                          }
+                        }}
                         className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all ${
                         driver.status === 'Active' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-slate-100 text-slate-400 border-slate-200'
                       }`}>
@@ -501,7 +552,41 @@ const Delivery = () => {
                 <X className="w-6 h-6" />
               </button>
             </div>
-            <form className="p-8 space-y-5" onSubmit={(e) => { e.preventDefault(); if(driverStep === 1) setDriverStep(2); else { setShowAddDriver(false); setDriverStep(1); } }}>
+            <form className="p-8 space-y-5" onSubmit={async (e) => { 
+              e.preventDefault(); 
+              if(driverStep === 1) {
+                setDriverStep(2);
+              } else {
+                try {
+                  const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(driverForm)
+                  });
+                  if (res.ok) {
+                    const newDrv = await res.json();
+                    setDrivers([{
+                      id: newDrv.id,
+                      driver_id: newDrv.driver_id,
+                      name: newDrv.name,
+                      status: newDrv.status,
+                      vehicle: newDrv.vehicle,
+                      contact: newDrv.contact,
+                      orders: newDrv.total_orders,
+                      rating: parseFloat(newDrv.rating)
+                    }, ...drivers]);
+                    setShowAddDriver(false);
+                    setDriverStep(1);
+                    setDriverForm({ name: '', vehicle: 'Mini Truck', contact: '', username: '', password: '', imageUrl: '' });
+                  } else {
+                    const data = await res.json();
+                    alert(data.message || 'Registration failed');
+                  }
+                } catch (err) {
+                  console.error(err);
+                }
+              } 
+            }}>
               {driverStep === 1 ? (
                 <>
                   <div className="flex flex-col items-center mb-2">
@@ -512,19 +597,35 @@ const Delivery = () => {
                   </div>
                   <div>
                     <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Full Name</label>
-                    <input required className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all" placeholder="e.g. Rahul Sharma" />
+                    <input 
+                      required 
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all" 
+                      placeholder="e.g. Rahul Sharma" 
+                      value={driverForm.name}
+                      onChange={(e) => setDriverForm({ ...driverForm, name: e.target.value })}
+                    />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Vehicle</label>
-                      <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold outline-none">
+                      <select 
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold outline-none"
+                        value={driverForm.vehicle}
+                        onChange={(e) => setDriverForm({ ...driverForm, vehicle: e.target.value })}
+                      >
                         <option>Mini Truck</option>
                         <option>EV Three-Wheeler</option>
                       </select>
                     </div>
                     <div>
                       <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Contact</label>
-                      <input required className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none" placeholder="+91..." />
+                      <input 
+                        required 
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none" 
+                        placeholder="+91..." 
+                        value={driverForm.contact}
+                        onChange={(e) => setDriverForm({ ...driverForm, contact: e.target.value })}
+                      />
                     </div>
                   </div>
                   <div className="pt-6 flex gap-4">
@@ -542,11 +643,24 @@ const Delivery = () => {
                   </div>
                   <div>
                     <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Username</label>
-                    <input required className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all" placeholder="driver_rahul" />
+                    <input 
+                      required 
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all" 
+                      placeholder="driver_rahul" 
+                      value={driverForm.username}
+                      onChange={(e) => setDriverForm({ ...driverForm, username: e.target.value })}
+                    />
                   </div>
                   <div>
                     <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Password</label>
-                    <input required type="password" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all" placeholder="••••••••" />
+                    <input 
+                      required 
+                      type="password" 
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all" 
+                      placeholder="••••••••" 
+                      value={driverForm.password}
+                      onChange={(e) => setDriverForm({ ...driverForm, password: e.target.value })}
+                    />
                   </div>
                   <div className="pt-6 flex gap-4">
                     <button type="button" onClick={() => setDriverStep(1)} className="flex-1 py-3 text-[11px] font-black text-slate-500 bg-slate-100 hover:bg-slate-200 rounded-xl uppercase tracking-widest transition-all">Back</button>

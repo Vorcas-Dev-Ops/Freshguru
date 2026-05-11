@@ -11,6 +11,8 @@ import Reports from './pages/Reports';
 import Backup from './pages/Backup';
 import Banners from './pages/Banners';
 import Settings from './pages/Settings';
+import Login from './pages/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 import { UserProvider } from './context/UserContext';
 
 function App() {
@@ -18,20 +20,28 @@ function App() {
     <UserProvider>
       <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="customers" element={<Customers />} />
-            <Route path="inventory" element={<Inventory />} />
-            <Route path="orders" element={<Orders />} />
-            <Route path="orders/:id" element={<OrderDetails />} />
-            <Route path="delivery" element={<Delivery />} />
-            <Route path="expenses" element={<Expenses />} />
-            <Route path="banners" element={<Banners />} />
-            <Route path="reports" element={<Reports />} />
-            <Route path="backup" element={<Backup />} />
-            <Route path="settings" element={<Settings />} />
+          <Route path="/login" element={<Login />} />
+          
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="customers" element={<Customers />} />
+              <Route path="inventory" element={<Inventory />} />
+              <Route path="orders" element={<Orders />} />
+              <Route path="orders/:id" element={<OrderDetails />} />
+              <Route path="delivery" element={<Delivery />} />
+              <Route path="expenses" element={<Expenses />} />
+              <Route path="banners" element={<Banners />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="backup" element={<Backup />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
           </Route>
+
+          {/* Catch all */}
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Router>
     </UserProvider>

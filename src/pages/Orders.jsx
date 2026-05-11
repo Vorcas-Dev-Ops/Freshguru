@@ -21,11 +21,13 @@ import {
   LayoutGrid,
   Download
 } from 'lucide-react';
+import ConfirmModal from '../components/ConfirmModal';
 
 const Orders = () => {
   const navigate = useNavigate();
   const [activeTab] = useState('Delivered');
   const [searchTerm, setSearchTerm] = useState('');
+  const [rejectConfirm, setRejectConfirm] = useState(null); // stores id of order to reject
   
   const [orders, setOrders] = useState([
     { 
@@ -99,9 +101,13 @@ const Orders = () => {
   };
 
   const handleReject = (id) => {
-    if (window.confirm('Are you sure you want to reject this order?')) {
-      setOrders(prev => prev.map(o => o.id === id ? { ...o, status: 'Rejected' } : o));
-    }
+    setRejectConfirm(id);
+  };
+
+  const confirmReject = () => {
+    if (!rejectConfirm) return;
+    setOrders(prev => prev.map(o => o.id === rejectConfirm ? { ...o, status: 'Rejected' } : o));
+    setRejectConfirm(null);
   };
 
   const filteredOrders = orders.filter(o => 
@@ -272,6 +278,14 @@ const Orders = () => {
           </table>
         </div>
       </div>
+      <ConfirmModal 
+        isOpen={!!rejectConfirm}
+        onClose={() => setRejectConfirm(null)}
+        onConfirm={confirmReject}
+        title="Reject Order"
+        message="Are you sure you want to reject this order? This will cancel the procurement process for this transaction."
+        confirmText="Confirm Rejection"
+      />
       </>
     );
 };

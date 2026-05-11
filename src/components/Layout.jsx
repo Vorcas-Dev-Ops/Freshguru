@@ -20,6 +20,8 @@ import { useUser } from '../context/UserContext';
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useUser();
   
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -33,6 +35,11 @@ const Sidebar = () => {
     { icon: Database, label: 'Backup & Restore', path: '/backup' },
     { icon: SettingsIcon, label: 'Settings', path: '/settings' },
   ];
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
 
   return (
     <aside className="fixed left-0 top-0 h-full w-[260px] bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800 flex flex-col py-4 z-40 transition-colors duration-300">
@@ -71,7 +78,10 @@ const Sidebar = () => {
           <HelpCircle className="mr-3 w-4 h-4" />
           <span className="text-[13px] font-medium">Support</span>
         </button>
-        <button className="w-full flex items-center py-2 text-error hover:opacity-80 transition-all">
+        <button 
+          onClick={handleLogout}
+          className="w-full flex items-center py-2 text-error hover:opacity-80 transition-all"
+        >
           <LogOut className="mr-3 w-4 h-4" />
           <span className="text-[13px] font-medium">Logout</span>
         </button>
@@ -120,14 +130,12 @@ const Header = () => {
         <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 mx-1" />
         <div className="flex items-center gap-3 ml-2">
           <div className="text-right hidden sm:block">
-            <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight leading-none">{profile.name}</p>
+            <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight leading-none">{profile?.name || 'Admin'}</p>
             <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">Super Admin</p>
           </div>
-          <img 
-            alt="Admin" 
-            className="h-9 w-9 rounded-xl border-2 border-white dark:border-slate-800 shadow-sm object-cover" 
-            src={profile.avatar} 
-          />
+          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-emerald-100 to-green-200 dark:from-emerald-900 dark:to-green-800 flex items-center justify-center border-2 border-white dark:border-slate-800 shadow-sm overflow-hidden">
+            <span className="text-emerald-700 dark:text-emerald-300 font-bold text-xs">{profile?.name?.charAt(0) || 'A'}</span>
+          </div>
         </div>
       </div>
     </header>

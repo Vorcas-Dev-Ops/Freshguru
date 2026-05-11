@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Plus, 
   TrendingUp, 
@@ -14,25 +14,77 @@ import {
   ChevronRight,
   LayoutGrid
 } from 'lucide-react';
+import ConfirmModal from '../components/ConfirmModal';
 
 const Inventory = () => {
   const [showModal, setShowModal] = useState(false);
-  const [modalMode, setModalMode] = useState('add'); // 'add' or 'edit'
+  const [modalMode, setModalMode] = useState('add');
   const [showCategoryModal, setShowCategoryModal] = useState(false);
-  const [categories, setCategories] = useState(['Fruit', 'Vegetable', 'Dairy', 'Bakery', 'Frozen']);
+  const [deleteConfirm, setDeleteConfirm] = useState(null); // stores id of product to delete
+  const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  
-  const [products, setProducts] = useState([
-    { id: 'VEG-001-BROC', name: 'Broccoli Florets', cat: 'Vegetable', purchasePrice: 60, price: 85, discount: 10, unit: 'kg', qty: 450, minQty: 1, enabled: true, img: 'https://images.unsplash.com/photo-1453227588063-bb302b62f50b?auto=format&fit=crop&q=80&w=150&h=150' },
-    { id: 'FRU-005-MANG', name: 'Alphonso Mangoes', cat: 'Fruit', purchasePrice: 950, price: 1200, discount: 5, unit: 'Crate', qty: 4, minQty: 1, enabled: true, img: 'https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&q=80&w=150&h=150' },
-    { id: 'VEG-042-ONIO', name: 'Spanish Red Onions', cat: 'Vegetable', purchasePrice: 40, price: 35, discount: 0, unit: 'kg', qty: 12, minQty: 5, enabled: true, img: 'https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&q=80&w=150&h=150' },
-  ]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [formData, setFormData] = useState({
-    id: '', name: '', cat: 'Fruit', purchasePrice: '', price: '', discount: '', unit: 'kg', qty: '', minQty: 1, enabled: true, img: ''
+    dbId: '', sku: '', name: '', cat: 'Fruit', purchasePrice: '', price: '', discount: 0, unit: 'kg', qty: '', minQty: 1, enabled: true, img: ''
   });
   const [imgPreview, setImgPreview] = useState(null);
+
+  const API_URL = 'http://localhost:5055/api/inventory';
+
+  useEffect(() => {
+    fetchInitialData();
+  }, []);
+
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('admin_token');
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+  };
+
+  const fetchInitialData = async () => {
+    try {
+      setLoading(true);
+      const [prodRes, catRes] = await Promise.all([
+        fetch(`${API_URL}/products`),
+        fetch(`http://localhost:5055/api/categories`)
+      ]);
+
+      if (!prodRes.ok || !catRes.ok) throw new Error('Failed to fetch data');
+
+      const prodData = await prodRes.json();
+      const catData = await catRes.json();
+
+      const mappedProducts = prodData.map(p => ({
+        dbId: p.id,
+        id: p.sku,
+        name: p.name,
+        cat: p.category,
+        purchasePrice: parseFloat(p.purchase_price),
+        price: parseFloat(p.retail_price),
+        discount: parseFloat(p.discount),
+        unit: p.unit,
+        qty: p.quantity,
+        minQty: p.min_quantity,
+        enabled: p.enabled,
+        img: p.image_url
+      }));
+
+      setProducts(mappedProducts);
+      setCategories(catData);
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError('Could not connect to backend.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -48,37 +100,178 @@ const Inventory = () => {
 
   const openAddModal = () => {
     setModalMode('add');
-    setFormData({ id: '', name: '', cat: 'Fruit', purchasePrice: '', price: '', discount: '', unit: 'kg', qty: '', minQty: 1, enabled: true, img: '' });
+    setFormData({ dbId: '', sku: '', name: '', cat: categories[0] || 'Fruit', purchasePrice: '', price: '', discount: 0, unit: 'kg', qty: '', minQty: 1, enabled: true, img: '' });
     setImgPreview(null);
     setShowModal(true);
   };
 
   const openEditModal = (product) => {
     setModalMode('edit');
-    setFormData(product);
+    setFormData({
+      dbId: product.dbId,
+      sku: product.id,
+      name: product.name,
+      cat: product.cat,
+      purchasePrice: product.purchasePrice,
+      price: product.price,
+      discount: product.discount,
+      unit: product.unit,
+      qty: product.qty,
+      minQty: product.minQty,
+      enabled: product.enabled,
+      img: product.img
+    });
     setImgPreview(product.img);
     setShowModal(true);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this item?')) {
-      setProducts(prev => prev.filter(p => p.id !== id));
+  const handleDelete = (dbId) => {
+    setDeleteConfirm(dbId);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirm) return;
+    try {
+      const response = await fetch(`${API_URL}/products/${deleteConfirm}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
+      if (response.ok) {
+        setProducts(prev => prev.filter(p => p.dbId !== deleteConfirm));
+        setDeleteConfirm(null);
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
-  const handleToggleStatus = (id) => {
-    setProducts(prev => prev.map(p => p.id === id ? { ...p, enabled: !p.enabled } : p));
+  const handleToggleStatus = async (product) => {
+    try {
+      const response = await fetch(`${API_URL}/products/${product.dbId}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          ...product,
+          enabled: !product.enabled,
+          sku: product.id,
+          category: product.cat,
+          purchasePrice: product.purchasePrice,
+          retailPrice: product.price,
+          minQuantity: product.minQty,
+          quantity: product.qty,
+          imageUrl: product.img
+        })
+      });
+      if (response.ok) {
+        setProducts(prev => prev.map(p => p.dbId === product.dbId ? { ...p, enabled: !p.enabled } : p));
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (modalMode === 'add') {
-      const newId = `${formData.cat.substring(0,3).toUpperCase()}-${Math.floor(Math.random()*1000)}`;
-      setProducts([{ ...formData, id: newId, purchasePrice: Number(formData.purchasePrice), price: Number(formData.price), discount: Number(formData.discount), qty: Number(formData.qty) }, ...products]);
-    } else {
-      setProducts(products.map(p => p.id === formData.id ? { ...formData, purchasePrice: Number(formData.purchasePrice), price: Number(formData.price), discount: Number(formData.discount), qty: Number(formData.qty) } : p));
+    
+    const payload = {
+      sku: formData.sku || `${formData.cat.substring(0,3).toUpperCase()}-${Math.floor(Math.random()*10000)}`,
+      name: formData.name,
+      category: formData.cat,
+      purchasePrice: Number(formData.purchasePrice),
+      retailPrice: Number(formData.price),
+      discount: Number(formData.discount || 0),
+      unit: formData.unit,
+      quantity: Number(formData.qty),
+      minQuantity: Number(formData.minQty || 1),
+      enabled: formData.enabled,
+      imageUrl: formData.img
+    };
+
+    try {
+      if (modalMode === 'add') {
+        const response = await fetch(`${API_URL}/products`, {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify(payload)
+        });
+        if (response.ok) {
+          const p = await response.json();
+          const added = {
+            dbId: p.id,
+            id: p.sku,
+            name: p.name,
+            cat: p.category,
+            purchasePrice: parseFloat(p.purchase_price),
+            price: parseFloat(p.retail_price),
+            discount: parseFloat(p.discount),
+            unit: p.unit,
+            qty: p.quantity,
+            minQty: p.min_quantity,
+            enabled: p.enabled,
+            img: p.image_url
+          };
+          setProducts([added, ...products]);
+        }
+      } else {
+        const response = await fetch(`${API_URL}/products/${formData.dbId}`, {
+          method: 'PUT',
+          headers: getAuthHeaders(),
+          body: JSON.stringify(payload)
+        });
+        if (response.ok) {
+          const p = await response.json();
+          const updated = {
+            dbId: p.id,
+            id: p.sku,
+            name: p.name,
+            cat: p.category,
+            purchasePrice: parseFloat(p.purchase_price),
+            price: parseFloat(p.retail_price),
+            discount: parseFloat(p.discount),
+            unit: p.unit,
+            qty: p.quantity,
+            minQty: p.min_quantity,
+            enabled: p.enabled,
+            img: p.image_url
+          };
+          setProducts(prev => prev.map(item => item.dbId === updated.dbId ? updated : item));
+        }
+      }
+      setShowModal(false);
+    } catch (err) {
+      console.error(err);
     }
-    setShowModal(false);
+  };
+
+  const handleAddCategory = async () => {
+    if (!newCategory) return;
+    try {
+      const response = await fetch(`http://localhost:5055/api/categories`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ name: newCategory })
+      });
+      if (response.ok) {
+        setCategories([...categories, newCategory]);
+        setNewCategory('');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteCategory = async (catName) => {
+    try {
+      const response = await fetch(`http://localhost:5055/api/categories/${catName}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
+      if (response.ok) {
+        setCategories(categories.filter(c => c !== catName));
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const filteredProducts = products.filter(p => 
@@ -117,12 +310,18 @@ const Inventory = () => {
         </div>
       </div>
 
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600 text-xs font-bold uppercase">
+          <AlertCircle className="w-4 h-4" /> {error}
+        </div>
+      )}
+
       {/* Summary Insights Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatBox label="Inventory Value" value="₹12.4L" trend="+4.2%" icon={TrendingUp} />
+        <StatBox label="Inventory Value" value={`₹${products.reduce((acc, p) => acc + (p.purchasePrice * p.qty), 0).toLocaleString()}`} trend="+4.2%" icon={TrendingUp} />
         <StatBox label="Active Items" value={products.filter(p => p.enabled).length} sub={`${categories.length} categories`} icon={Package} />
         <StatBox label="Out of Stock" value={products.filter(p => p.qty === 0).length} sub="Needs Attention" icon={AlertTriangle} alert={products.some(p => p.qty === 0)} />
-        <StatBox label="Avg Unit Margin" value="₹24.50" sub="Gross" icon={LayoutGrid} />
+        <StatBox label="Avg Unit Margin" value={`₹${products.length ? (products.reduce((acc, p) => acc + (p.price - p.purchasePrice), 0) / products.length).toFixed(2) : 0}`} sub="Gross" icon={LayoutGrid} />
       </div>
 
       {/* Main Table Section */}
@@ -161,75 +360,89 @@ const Inventory = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredProducts.map((p) => (
-                <tr key={p.id} className={`hover:bg-slate-50/50 transition-all group ${!p.enabled ? 'opacity-60' : ''}`}>
-                  <td className="px-8 py-5">
-                    <div className="flex items-center gap-4">
-                      <div className="relative">
-                        <img src={p.img || 'https://via.placeholder.com/150?text=Item'} className="w-14 h-14 rounded-2xl object-cover bg-slate-100 shadow-sm border border-slate-100" alt={p.name} />
-                        {!p.enabled && (
-                          <div className="absolute inset-0 bg-slate-900/40 rounded-2xl flex items-center justify-center">
-                            <span className="text-[8px] text-white font-black uppercase">Disabled</span>
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <div className="font-bold text-slate-900 text-sm tracking-tight">{p.name}</div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">SKU: {p.id}</span>
-                          <span className="h-1 w-1 bg-slate-300 rounded-full"></span>
-                          <span className="text-[9px] text-bottle-green font-bold uppercase tracking-widest">{p.cat}</span>
-                          <span className="h-1 w-1 bg-slate-300 rounded-full"></span>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); handleToggleStatus(p.id); }}
-                            className={`text-[8px] font-black uppercase tracking-tighter px-1.5 py-0.5 rounded border transition-all ${
-                              p.enabled ? 'bg-green-50 text-green-600 border-green-100' : 'bg-slate-100 text-slate-400 border-slate-200'
-                            }`}
-                          >
-                            {p.enabled ? 'Active' : 'Inactive'}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-8 py-5">
-                    <div className="text-sm font-bold text-slate-400 tracking-tight">₹{p.purchasePrice.toFixed(2)}</div>
-                  </td>
-                  <td className="px-8 py-5">
-                    <div className="text-sm font-bold text-slate-900 tracking-tight">₹{p.price.toFixed(2)}</div>
-                    {p.discount > 0 && (
-                      <div className="text-[10px] text-green-600 font-bold mt-0.5">-{p.discount}% OFF</div>
-                    )}
-                  </td>
-                  <td className="px-8 py-5">
-                    {(() => {
-                      const sellingPrice = p.price * (1 - (p.discount / 100));
-                      const profit = sellingPrice - p.purchasePrice;
-                      const isProfit = profit >= 0;
-                      return (
-                        <div className={`flex flex-col`}>
-                          <span className={`text-sm font-black ${isProfit ? 'text-green-600' : 'text-red-600'}`}>
-                            {isProfit ? '+' : ''}₹{profit.toFixed(2)}
-                          </span>
-                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">
-                            {((profit / p.purchasePrice) * 100).toFixed(1)}% margin
-                          </span>
-                        </div>
-                      );
-                    })()}
-                  </td>
-                  <td className="px-8 py-5">
-                    <div className="text-sm font-bold text-slate-900 tracking-tight">{p.qty} {p.unit}s</div>
-                    <div className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">Min: {p.minQty}</div>
-                  </td>
-                  <td className="px-8 py-5 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button onClick={() => openEditModal(p)} className="p-2 text-slate-400 hover:text-blue-600 transition-all active:scale-90"><Edit3 className="w-4 h-4" /></button>
-                      <button onClick={() => handleDelete(p.id)} className="p-2 text-slate-400 hover:text-red-600 transition-all active:scale-90"><X className="w-4 h-4" /></button>
-                    </div>
+              {loading ? (
+                <tr>
+                  <td colSpan="6" className="px-8 py-10 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">
+                    Syncing Enterprise Inventory...
                   </td>
                 </tr>
-              ))}
+              ) : filteredProducts.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="px-8 py-10 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">
+                    No items found in ledger
+                  </td>
+                </tr>
+              ) : (
+                filteredProducts.map((p) => (
+                  <tr key={p.dbId} className={`hover:bg-slate-50/50 transition-all group ${!p.enabled ? 'opacity-60' : ''}`}>
+                    <td className="px-8 py-5">
+                      <div className="flex items-center gap-4">
+                        <div className="relative">
+                          <img src={p.img || 'https://via.placeholder.com/150?text=Item'} className="w-14 h-14 rounded-2xl object-cover bg-slate-100 shadow-sm border border-slate-100" alt={p.name} />
+                          {!p.enabled && (
+                            <div className="absolute inset-0 bg-slate-900/40 rounded-2xl flex items-center justify-center">
+                              <span className="text-[8px] text-white font-black uppercase">Disabled</span>
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <div className="font-bold text-slate-900 text-sm tracking-tight">{p.name}</div>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">SKU: {p.id}</span>
+                            <span className="h-1 w-1 bg-slate-300 rounded-full"></span>
+                            <span className="text-[9px] text-bottle-green font-bold uppercase tracking-widest">{p.cat}</span>
+                            <span className="h-1 w-1 bg-slate-300 rounded-full"></span>
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); handleToggleStatus(p); }}
+                              className={`text-[8px] font-black uppercase tracking-tighter px-1.5 py-0.5 rounded border transition-all ${
+                                p.enabled ? 'bg-green-50 text-green-600 border-green-100' : 'bg-slate-100 text-slate-400 border-slate-200'
+                              }`}
+                            >
+                              {p.enabled ? 'Active' : 'Inactive'}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-8 py-5">
+                      <div className="text-sm font-bold text-slate-400 tracking-tight">₹{p.purchasePrice.toFixed(2)}</div>
+                    </td>
+                    <td className="px-8 py-5">
+                      <div className="text-sm font-bold text-slate-900 tracking-tight">₹{p.price.toFixed(2)}</div>
+                      {p.discount > 0 && (
+                        <div className="text-[10px] text-green-600 font-bold mt-0.5">-{p.discount}% OFF</div>
+                      )}
+                    </td>
+                    <td className="px-8 py-5">
+                      {(() => {
+                        const sellingPrice = p.price * (1 - (p.discount / 100));
+                        const profit = sellingPrice - p.purchasePrice;
+                        const isProfit = profit >= 0;
+                        return (
+                          <div className={`flex flex-col`}>
+                            <span className={`text-sm font-black ${isProfit ? 'text-green-600' : 'text-red-600'}`}>
+                              {isProfit ? '+' : ''}₹{profit.toFixed(2)}
+                            </span>
+                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">
+                              {((profit / p.purchasePrice) * 100).toFixed(1)}% margin
+                            </span>
+                          </div>
+                        );
+                      })()}
+                    </td>
+                    <td className="px-8 py-5">
+                      <div className="text-sm font-bold text-slate-900 tracking-tight">{p.qty} {p.unit}s</div>
+                      <div className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">Min: {p.minQty}</div>
+                    </td>
+                    <td className="px-8 py-5 text-right">
+                      <div className="flex justify-end gap-2">
+                        <button onClick={() => openEditModal(p)} className="p-2 text-slate-400 hover:text-blue-600 transition-all active:scale-90"><Edit3 className="w-4 h-4" /></button>
+                        <button onClick={() => handleDelete(p.dbId)} className="p-2 text-slate-400 hover:text-red-600 transition-all active:scale-90"><X className="w-4 h-4" /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -381,7 +594,7 @@ const Inventory = () => {
       {/* Category Modal */}
       {showCategoryModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+          <div className="bg-white w-full max-sm rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
             <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest">Manage Categories</h3>
               <button onClick={() => setShowCategoryModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
@@ -397,12 +610,7 @@ const Inventory = () => {
                   placeholder="New Category..." 
                 />
                 <button 
-                  onClick={() => {
-                    if (newCategory) {
-                      setCategories([...categories, newCategory]);
-                      setNewCategory('');
-                    }
-                  }}
+                  onClick={handleAddCategory}
                   className="p-2 bg-green-600 text-white rounded-xl"
                 ><Plus className="w-5 h-5" /></button>
               </div>
@@ -410,7 +618,7 @@ const Inventory = () => {
                 {categories.map((cat, i) => (
                   <div key={i} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg text-xs font-bold text-slate-600">
                     {cat}
-                    <button onClick={() => setCategories(categories.filter(c => c !== cat))} className="text-red-400 hover:text-red-600"><X className="w-4 h-4" /></button>
+                    <button onClick={() => handleDeleteCategory(cat)} className="text-red-400 hover:text-red-600"><X className="w-4 h-4" /></button>
                   </div>
                 ))}
               </div>
@@ -418,6 +626,15 @@ const Inventory = () => {
           </div>
         </div>
       )}
+
+      <ConfirmModal 
+        isOpen={!!deleteConfirm}
+        onClose={() => setDeleteConfirm(null)}
+        onConfirm={confirmDelete}
+        title="Delete Item"
+        message="Are you sure you want to remove this item from the inventory? This action cannot be undone and will affect stock records."
+        confirmText="Remove Item"
+      />
     </div>
   );
 };

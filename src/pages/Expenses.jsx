@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import ConfirmModal from '../components/ConfirmModal';
 import { 
   Wallet, 
   Plus, 
@@ -25,12 +26,51 @@ import {
 const Expenses = () => {
   const [showForm, setShowForm] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const [expenses, setExpenses] = useState([
-    { id: 1, date: 'Oct 24, 2023', category: 'FARM PROCUREMENT', description: 'Carrots (Red variety)', qty: '500 Kgs', unitPrice: '₹0.85', amount: '₹425.00' },
-    { id: 2, date: 'Oct 23, 2023', category: 'DRIVER SALARY', description: 'Weekly Salary - John Doe', qty: '-', unitPrice: '-', amount: '₹1,200.00' },
-    { id: 3, date: 'Oct 22, 2023', category: 'VEHICLE MAINTENANCE', description: 'Truck #042 Oil Change', qty: '-', unitPrice: '-', amount: '₹185.50' },
-    { id: 4, date: 'Oct 21, 2023', category: 'FARM PROCUREMENT', description: 'Sweet Corn', qty: '1,200 Kgs', unitPrice: '₹0.60', amount: '₹720.00' },
-  ]);
+  const [expenses, setExpenses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [expenseToDelete, setExpenseToDelete] = useState(null);
+
+  const API_URL = 'http://localhost:5055/api/expenses';
+
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
+
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('admin_token');
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+  };
+
+  const fetchExpenses = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(API_URL);
+      if (response.ok) {
+        const data = await response.json();
+        const mapped = data.map(e => ({
+          id: e.id,
+          date: new Date(e.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+          category: e.category.toUpperCase(),
+          description: e.description,
+          qty: e.quantity || '-',
+          unitPrice: e.unit_price ? `₹${e.unit_price}` : '-',
+          amount: `₹${parseFloat(e.amount).toFixed(2)}`,
+          addedBy: e.added_by,
+          editedBy: e.edited_by
+        }));
+        setExpenses(mapped);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const [formData, setFormData] = useState({
     category: 'Farm Procurement',
@@ -49,27 +89,78 @@ const Expenses = () => {
   const isSalary = formData.category === 'Driver Salary';
 
   const calculatedTotal = isProcurement 
-    ? (Number(formData.kgs || 0) * Number(formData.pricePerKg || 0)).toFixed(2)
-    : Number(formData.amount || 0).toFixed(2);
+    ? ((parseFloat(formData.kgs) || 0) * (parseFloat(formData.pricePerKg) || 0)).toFixed(2)
+    : (parseFloat(formData.amount) || 0).toFixed(2);
 
-  const handleAddExpense = () => {
+  const handleAddExpense = async () => {
     const finalCategory = isCustomCategory ? formData.customCategory : formData.category;
     if (!finalCategory) return alert('Please specify a category');
 
-    const newExpense = {
-      id: Date.now(),
-      date: formData.date,
+    // Convert date from DD/MM/YYYY to YYYY-MM-DD for backend
+    let formattedDate;
+    if (formData.date.includes('/')) {
+      const dateParts = formData.date.split('/');
+      if (dateParts.length === 3) {
+        formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+      } else {
+        formattedDate = new Date().toISOString().split('T')[0];
+      }
+    } else {
+      // Fallback to today if format is invalid
+      formattedDate = new Date().toISOString().split('T')[0];
+    }
+
+    const payload = {
+      date: formattedDate,
       category: finalCategory.toUpperCase(),
       description: formData.itemName || formData.description || (isSalary ? 'Driver Payout' : 'Expense'),
-      qty: isProcurement && formData.kgs ? `${formData.kgs} Kgs` : '-',
-      unitPrice: isProcurement && formData.pricePerKg ? `₹${formData.pricePerKg}` : '-',
-      amount: `₹${calculatedTotal}`
+      quantity: isProcurement && formData.kgs ? `${formData.kgs} Kgs` : null,
+      unitPrice: isProcurement && formData.pricePerKg ? parseFloat(formData.pricePerKg) : null,
+      amount: parseFloat(calculatedTotal)
     };
 
-    setExpenses([newExpense, ...expenses]);
-    setShowForm(false);
-    setShowSuccessDialog(true);
-    // Reset form
+    try {
+      const response = await fetch(editingId ? `${API_URL}/${editingId}` : API_URL, {
+        method: editingId ? 'PUT' : 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        const e = await response.json();
+        const updatedExp = {
+          id: e.id,
+          date: new Date(e.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+          category: e.category.toUpperCase(),
+          description: e.description,
+          qty: e.quantity || '-',
+          unitPrice: e.unit_price ? `₹${e.unit_price}` : '-',
+          amount: `₹${parseFloat(e.amount).toFixed(2)}`,
+          addedBy: e.added_by,
+          editedBy: e.edited_by
+        };
+
+        if (editingId) {
+          setExpenses(prev => prev.map(exp => exp.id === editingId ? updatedExp : exp));
+        } else {
+          setExpenses([updatedExp, ...expenses]);
+        }
+        
+        setShowForm(false);
+        setEditingId(null);
+        setShowSuccessDialog(true);
+        resetForm();
+      } else {
+        const data = await response.json();
+        alert(data.message || 'Operation failed');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Connection error');
+    }
+  };
+
+  const resetForm = () => {
     setFormData({
       category: 'Farm Procurement',
       customCategory: '',
@@ -81,6 +172,47 @@ const Expenses = () => {
       date: new Date().toLocaleDateString('en-GB')
     });
     setIsCustomCategory(false);
+    setEditingId(null);
+  };
+
+  const handleEdit = (expense) => {
+    // Reverse the formatting for the form
+    const [day, monthStr, year] = expense.date.split(' ');
+    const months = { 'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12' };
+    const month = months[monthStr];
+    const rawDate = `${day}/${month}/${year}`;
+
+    const isProc = expense.category === 'FARM PROCUREMENT';
+    
+    setFormData({
+      category: expense.category.charAt(0) + expense.category.slice(1).toLowerCase(),
+      customCategory: '',
+      itemName: isProc ? expense.description : '',
+      kgs: isProc ? expense.qty.replace(' Kgs', '') : '',
+      pricePerKg: isProc ? expense.unitPrice.replace('₹', '') : '',
+      amount: !isProc ? expense.amount.replace('₹', '') : '',
+      description: !isProc ? expense.description : '',
+      date: rawDate
+    });
+    setEditingId(expense.id);
+    setShowForm(true);
+  };
+
+  const handleDeleteExpense = async () => {
+    if (!expenseToDelete) return;
+    try {
+      const response = await fetch(`${API_URL}/${expenseToDelete.id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
+      if (response.ok) {
+        setExpenses(prev => prev.filter(e => e.id !== expenseToDelete.id));
+        setShowDeleteModal(false);
+        setExpenseToDelete(null);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -168,11 +300,13 @@ const Expenses = () => {
             {/* Modal Header */}
             <div className="p-6 bg-emerald-50/50 dark:bg-emerald-950/20 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Log New Expense</h2>
+                <h2 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">
+                  {editingId ? 'Edit Expense Entry' : 'Log New Expense'}
+                </h2>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Enter the details below to record a new transaction.</p>
               </div>
               <button 
-                onClick={() => setShowForm(false)}
+                onClick={() => { setShowForm(false); resetForm(); }}
                 className="p-2 text-slate-400 hover:text-slate-600 transition-colors"
               >
                 <Plus className="w-5 h-5 rotate-45" />
@@ -319,7 +453,7 @@ const Expenses = () => {
             {/* Modal Footer */}
             <div className="p-6 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-4">
               <button 
-                onClick={() => setShowForm(false)}
+                onClick={() => { setShowForm(false); resetForm(); }}
                 className="w-full py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl font-black text-[11px] uppercase tracking-widest text-slate-500 hover:bg-slate-50 transition-all"
               >
                 Cancel
@@ -328,7 +462,8 @@ const Expenses = () => {
                 onClick={handleAddExpense}
                 className="w-full flex items-center justify-center gap-3 bg-emerald-700 dark:bg-emerald-600 text-white py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-emerald-800 transition-all shadow-lg shadow-emerald-200 dark:shadow-none"
               >
-                <CheckCircle2 className="w-4 h-4" /> Finalize & Log Expense
+                <CheckCircle2 className="w-4 h-4" /> 
+                {editingId ? 'Update & Save Changes' : 'Finalize & Log Expense'}
               </button>
             </div>
           </div>
@@ -359,6 +494,7 @@ const Expenses = () => {
                 <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">QUANTITY</th>
                 <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">UNIT PRICE</th>
                 <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">TOTAL AMOUNT</th>
+                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">LOGGED BY</th>
                 <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">ACTIONS</th>
               </tr>
             </thead>
@@ -380,12 +516,32 @@ const Expenses = () => {
                   <td className="px-8 py-6 text-sm font-bold text-slate-500 dark:text-slate-400">{expense.qty}</td>
                   <td className="px-8 py-6 text-sm font-bold text-slate-500 dark:text-slate-400">{expense.unitPrice}</td>
                   <td className="px-8 py-6 text-sm font-black text-slate-900 dark:text-white">{expense.amount}</td>
+                  <td className="px-8 py-6">
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-1.5">
+                        <UserCircle className="w-3 h-3 text-emerald-600" />
+                        {expense.addedBy || 'System'}
+                      </p>
+                      {expense.editedBy && (
+                        <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                          <Edit2 className="w-2.5 h-2.5" />
+                          Edited: {expense.editedBy}
+                        </p>
+                      )}
+                    </div>
+                  </td>
                   <td className="px-8 py-6 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button className="p-2 text-slate-400 hover:text-emerald-500 transition-colors">
+                      <button 
+                        onClick={() => handleEdit(expense)}
+                        className="p-2 text-slate-400 hover:text-emerald-500 transition-colors"
+                      >
                         <Edit2 className="w-4 h-4" />
                       </button>
-                      <button className="p-2 text-slate-400 hover:text-red-500 transition-colors">
+                      <button 
+                        onClick={() => { setExpenseToDelete(expense); setShowDeleteModal(true); }}
+                        className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+                      >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -396,6 +552,14 @@ const Expenses = () => {
           </table>
         </div>
       </div>
+      {/* Themed Confirm Modal */}
+      <ConfirmModal 
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDeleteExpense}
+        title="Delete Expense Entry"
+        message={`Are you sure you want to remove the expense entry for "${expenseToDelete?.description}"? This action will permanently update the financial records.`}
+      />
     </div>
   );
 };
