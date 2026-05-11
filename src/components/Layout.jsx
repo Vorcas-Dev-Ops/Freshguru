@@ -11,7 +11,10 @@ import {
   Leaf,
   Bell,
   Settings as SettingsIcon,
-  ShieldCheck
+  ShieldCheck,
+  Database,
+  Wallet,
+  Megaphone
 } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 
@@ -21,10 +24,13 @@ const Sidebar = () => {
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
     { icon: Users, label: 'Customers', path: '/customers' },
-    { icon: ShoppingBag, label: 'Orders', path: '/orders' },
-    { icon: Package, label: 'Products', path: '/products' },
+    { icon: ShoppingBag, label: 'Delivery History', path: '/orders' },
+    { icon: Package, label: 'Inventory', path: '/inventory' },
     { icon: Truck, label: 'Logistics', path: '/delivery' },
+    { icon: Wallet, label: 'Expenses', path: '/expenses' },
+    { icon: Megaphone, label: 'Banners', path: '/banners' },
     { icon: BarChart3, label: 'Insights', path: '/reports' },
+    { icon: Database, label: 'Backup & Restore', path: '/backup' },
     { icon: SettingsIcon, label: 'Settings', path: '/settings' },
   ];
 
@@ -82,10 +88,13 @@ const Header = () => {
   const getPageTitle = () => {
     if (location.pathname.startsWith('/dashboard')) return 'Dashboard';
     if (location.pathname.startsWith('/customers')) return 'Customers';
-    if (location.pathname.startsWith('/orders')) return 'Orders';
-    if (location.pathname.startsWith('/products')) return 'Inventory';
+    if (location.pathname.startsWith('/orders')) return 'Delivery History';
+    if (location.pathname.startsWith('/inventory')) return 'Inventory';
     if (location.pathname.startsWith('/delivery')) return 'Logistics';
+    if (location.pathname.startsWith('/expenses')) return 'Expense Management';
+    if (location.pathname.startsWith('/banners')) return 'Marketing Banners';
     if (location.pathname.startsWith('/reports')) return 'Insights';
+    if (location.pathname.startsWith('/backup')) return 'Backup & Recovery';
     if (location.pathname.startsWith('/settings')) return 'Settings';
     return 'Console';
   };

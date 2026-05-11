@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   PlusSquare, 
   UserCheck, 
@@ -11,7 +11,13 @@ import {
   Milk,
   Apple,
   MoreVertical,
-  ChevronRight
+  ChevronRight,
+  Wifi,
+  WifiOff,
+  Power,
+  LayoutGrid,
+  Wallet,
+  ArrowUpRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,6 +25,14 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [revenueRange, setRevenueRange] = useState('week');
   const [activePoint, setActivePoint] = useState(null);
+  const [isOnline, setIsOnline] = useState(() => {
+    const saved = localStorage.getItem('store_online_status');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('store_online_status', JSON.stringify(isOnline));
+  }, [isOnline]);
 
   const chartData = {
     week: [
@@ -53,7 +67,7 @@ const Dashboard = () => {
   ];
 
   const quickActions = [
-    { label: 'Add Product', sub: 'Update inventory', icon: PlusSquare, color: 'green', path: '/products' },
+    { label: 'Add Item', sub: 'Update inventory', icon: PlusSquare, color: 'green', path: '/inventory' },
     { label: 'Approve Customers', sub: '6 new applications', icon: UserCheck, color: 'blue', path: '/customers' },
     { label: 'Approve Orders', sub: '18 pending', icon: ClipboardCheck, color: 'orange', path: '/orders' },
     { label: 'Assign Driver', sub: '42 ready', icon: Truck, color: 'purple', path: '/delivery' },
@@ -79,46 +93,80 @@ const Dashboard = () => {
 
   return (
     <>
-      {/* Quick Actions */}
-      <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* ERP Command Header */}
+      <div className="flex flex-col xl:flex-row gap-8 mb-2">
+        <div className="flex-1">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-8 h-8 bg-[#0a4a34] rounded-lg flex items-center justify-center shadow-lg shadow-green-900/10">
+              <LayoutGrid className="w-5 h-5 text-white" />
+            </div>
+            <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">Business Overview</h2>
+          </div>
+          <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Real-time Command Center & Store Intelligence</p>
+        </div>
+
+        <div className="flex items-center gap-4 bg-white dark:bg-slate-900 p-2 px-4 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+          <div className="flex flex-col items-end">
+            <p className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Store Status</p>
+            <button 
+              onClick={() => setIsOnline(!isOnline)}
+              className={`relative w-40 h-10 rounded-full transition-all duration-500 shadow-inner group overflow-hidden ${
+                isOnline ? 'bg-emerald-500 shadow-emerald-900/20' : 'bg-slate-900 shadow-slate-900/40'
+              }`}
+            >
+              {/* Online Label */}
+              <span className={`absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-black uppercase tracking-widest text-white transition-all duration-500 ${
+                isOnline ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
+              }`}>Online</span>
+              
+              {/* Offline Label */}
+              <span className={`absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black uppercase tracking-widest text-slate-400 transition-all duration-500 ${
+                isOnline ? 'opacity-0 translate-x-4' : 'opacity-100 translate-x-0'
+              }`}>Offline</span>
+
+              <div className={`absolute top-1 w-8 h-8 bg-white rounded-full shadow-lg transition-all duration-500 transform ${
+                isOnline ? 'left-[120px]' : 'left-1'
+              } flex items-center justify-center`}>
+                <div className={`w-1.5 h-1.5 rounded-full transition-colors duration-500 ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-900'}`} />
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Action Command Grid */}
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {quickActions.map((action) => (
-          <div 
+          <button 
             key={action.label}
             onClick={() => navigate(action.path)}
-            className={`bg-white p-3 border border-${action.color}-100 rounded-xl flex items-center gap-3 hover:border-${action.color}-500 hover:shadow-lg transition-all cursor-pointer group hover:-translate-y-1 active:scale-95`}
+            className={`flex flex-col items-start p-4 bg-gradient-to-br from-emerald-50/50 via-white/80 to-white dark:from-emerald-900/10 dark:via-slate-900/90 dark:to-slate-900 border border-emerald-100/50 dark:border-emerald-500/10 rounded-[2rem] hover:border-${action.color}-500 dark:hover:border-${action.color}-500/50 hover:shadow-xl hover:shadow-emerald-900/5 transition-all duration-500 group relative overflow-hidden text-left active:scale-[0.98] h-[120px] justify-between`}
           >
-            <div className={`w-9 h-9 rounded-lg bg-${action.color}-50 text-${action.color}-600 flex items-center justify-center group-hover:bg-${action.color}-600 group-hover:text-white transition-all shadow-sm`}>
-              <action.icon className="w-5 h-5" />
+            <div className={`w-9 h-9 rounded-2xl bg-${action.color}-50 dark:bg-${action.color}-900/20 text-${action.color}-600 flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-sm`}>
+              <action.icon className="w-4 h-4" />
             </div>
             <div>
-              <p className="font-bold text-slate-900 text-[13px]">{action.label}</p>
-              <p className="text-[10px] text-slate-500 font-medium">{action.sub}</p>
+              <p className="font-black text-slate-900 dark:text-white text-[12px] tracking-tight mb-0.5 leading-tight">{action.label}</p>
+              <p className="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{action.sub}</p>
             </div>
-          </div>
+            
+            {/* Brand Glow */}
+            <div className={`absolute -right-4 -bottom-4 w-16 h-16 rounded-full bg-emerald-500 opacity-0 group-hover:opacity-10 blur-2xl transition-all duration-700`} />
+          </button>
         ))}
       </section>
 
-      {/* KPIs */}
-      <section className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        {kpis.map((kpi, i) => (
-          <div key={i} className={`bg-white p-4 border border-slate-200 rounded-xl shadow-sm ${kpi.isAlert ? 'bg-red-50/30 border-red-100' : ''}`}>
-            <p className={`text-[10px] font-bold uppercase tracking-wider mb-2 ${kpi.isAlert ? 'text-red-600' : 'text-slate-500'}`}>{kpi.title}</p>
-            <div className="flex items-end justify-between">
-              <h3 className={`text-2xl font-bold ${kpi.color}`}>{kpi.value}</h3>
-              {kpi.trend && (
-                <span className="text-[11px] font-bold text-primary flex items-center">
-                  <kpi.trendIcon className="w-3 h-3 mr-0.5" /> {kpi.trend}
-                </span>
-              )}
-              {kpi.subtext && <span className="text-[11px] font-bold text-slate-400">{kpi.subtext}</span>}
-              {kpi.icon && <kpi.icon className="w-4 h-4 text-red-500" />}
-            </div>
-          </div>
-        ))}
+      {/* KPIs Row */}
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <StatBox label="Today's Sales" value="₹1.45L" trend="+12.5%" icon={ShoppingBag} />
+        <StatBox label="Total Orders" value="124" trend="+8.2%" icon={ClipboardCheck} />
+        <StatBox label="Gross Profit" value="₹42,500" trend="+18.2%" icon={ArrowUpRight} />
+        <StatBox label="Net Profit" value="₹38,200" trend="+15.1%" icon={Wallet} />
+        <StatBox label="Stock Alerts" value="5" sub="Low Inventory" icon={AlertTriangle} alert />
       </section>
 
       {/* Middle Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {/* Revenue Trends */}
         <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-6 flex flex-col h-[400px] shadow-sm">
           <div className="flex justify-between items-center mb-6">
@@ -260,7 +308,7 @@ const Dashboard = () => {
           <table className="w-full text-left">
             <thead className="bg-slate-50 border-b border-slate-100">
               <tr>
-                <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Product</th>
+                <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Item</th>
                 <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Category</th>
                 <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Stock Level</th>
                 <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Wholesale</th>
@@ -299,5 +347,39 @@ const Dashboard = () => {
     </>
   );
 };
+
+const StatBox = ({ label, value, trend, sub, icon: Icon, alert }) => (
+  <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-500 group relative overflow-hidden">
+    <div className="relative z-10">
+      <div className="flex justify-between items-start mb-4">
+        <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 ${
+          alert ? 'bg-red-50 text-red-600' : 'bg-slate-50 dark:bg-slate-800 text-[#0a4a34] dark:text-green-400'
+        }`}>
+          {Icon && <Icon className="w-6 h-6" />}
+        </div>
+        {trend && (
+          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${
+            trend.startsWith('+') ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
+          }`}>
+            <TrendingUp className={`w-3 h-3 ${trend.startsWith('+') ? '' : 'rotate-180'}`} />
+            {trend}
+          </div>
+        )}
+      </div>
+      
+      <div>
+        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-1">{label}</p>
+        <div className="flex items-baseline gap-2">
+          <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">{value}</h3>
+          {sub && <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{sub}</span>}
+        </div>
+      </div>
+    </div>
+    
+    <div className={`absolute -right-4 -bottom-4 w-24 h-24 rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-700 ${
+      alert ? 'bg-red-500' : 'bg-[#0a4a34]'
+    }`} />
+  </div>
+);
 
 export default Dashboard;

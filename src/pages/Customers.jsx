@@ -24,10 +24,10 @@ const Customers = () => {
   ]);
 
   const [customers, setCustomers] = useState([
-    { id: 'FG-40291', name: 'Sai Kirana Store', initials: 'SK', type: 'Retail Grocery', location: 'Mumbai, MH', status: 'active' },
-    { id: 'FG-99120', name: 'Organic Mart', initials: 'OM', type: 'Specialty Retail', location: 'Bangalore, KA', status: 'pending' },
-    { id: 'FG-11822', name: 'Royal Foods Co.', initials: 'RF', type: 'Restaurant Chain', location: 'Delhi, DL', status: 'approved' },
-    { id: 'FG-88211', name: 'Hotel Taj Mahal', initials: 'HT', type: 'Hospitality', location: 'Pune, MH', status: 'blocked' }
+    { id: 'FG-40291', name: 'Sai Kirana Store', initials: 'SK', type: 'Retail Grocery', location: 'Mumbai, MH', status: 'active', creditBalance: 12500, loyaltyPoints: 450 },
+    { id: 'FG-99120', name: 'Organic Mart', initials: 'OM', type: 'Specialty Retail', location: 'Bangalore, KA', status: 'pending', creditBalance: 0, loyaltyPoints: 0 },
+    { id: 'FG-11822', name: 'Royal Foods Co.', initials: 'RF', type: 'Restaurant Chain', location: 'Delhi, DL', status: 'approved', creditBalance: 4200, loyaltyPoints: 890 },
+    { id: 'FG-88211', name: 'Hotel Taj Mahal', initials: 'HT', type: 'Hospitality', location: 'Pune, MH', status: 'blocked', creditBalance: 0, loyaltyPoints: 120 }
   ]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(null);
@@ -127,9 +127,43 @@ const Customers = () => {
 
   return (
     <>
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <KPICard title="Total Customers" value="1,284" trend="+12%" icon={UsersIcon} color="text-green-600" />
-        <KPICard title="New Requests" value="42" subtext="Pending Approval" icon={UserCheck} color="text-amber-500" />
+      {/* ERP Command Header */}
+      <div className="flex flex-col xl:flex-row gap-8 mb-8">
+        <div className="flex-1">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-8 h-8 bg-[#0a4a34] rounded-lg flex items-center justify-center shadow-lg shadow-green-900/10">
+              <UsersIcon className="w-5 h-5 text-white" />
+            </div>
+            <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">Customer Registry</h2>
+          </div>
+          <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Enterprise Partner Management & Business Approval Infrastructure</p>
+        </div>
+
+        <div className="flex items-center gap-3 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+          <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
+            <Search className="w-4 h-4 text-slate-400" />
+            <input 
+              type="text" 
+              placeholder="Search Partners..." 
+              className="bg-transparent border-none text-[10px] font-black uppercase tracking-widest text-slate-600 focus:ring-0 w-32"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="h-10 w-px bg-slate-100 dark:bg-slate-800" />
+          <button 
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 bg-[#0a4a34] text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-800 transition-all shadow-lg shadow-green-900/10"
+          >
+            <UserPlus className="w-3.5 h-3.5" /> Add Partner
+          </button>
+        </div>
+      </div>
+
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <StatBox title="Total Partners" value="1,284" trend="+12%" icon={UsersIcon} />
+        <StatBox title="Credit Ledger" value="₹1,42,500" subtext="Collection Pending" icon={Wallet} alert />
+        <StatBox title="Review Queue" value="42" subtext="Pending Approval" icon={UserCheck} />
       </section>
 
       <section className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
@@ -345,8 +379,9 @@ const Customers = () => {
             <thead className="bg-slate-50">
               <tr>
                 <th className="px-6 py-3 text-[12px] font-bold text-slate-500 uppercase tracking-wider">Customer Name</th>
-                <th className="px-6 py-3 text-[12px] font-bold text-slate-500 uppercase tracking-wider">Business Type</th>
-                <th className="px-6 py-3 text-[12px] font-bold text-slate-500 uppercase tracking-wider">Location</th>
+                <th className="px-6 py-3 text-[12px] font-bold text-slate-500 uppercase tracking-wider">Type & Location</th>
+                <th className="px-6 py-3 text-[12px] font-bold text-slate-500 uppercase tracking-wider">Credit Balance</th>
+                <th className="px-6 py-3 text-[12px] font-bold text-slate-500 uppercase tracking-wider">Loyalty Points</th>
                 <th className="px-6 py-3 text-[12px] font-bold text-slate-500 uppercase tracking-wider">Status</th>
                 <th className="px-6 py-3 text-[12px] font-bold text-slate-500 uppercase tracking-wider text-right">Actions</th>
               </tr>
@@ -368,31 +403,54 @@ const Customers = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{customer.type}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{customer.location}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-slate-600 font-bold">{customer.type}</div>
+                    <div className="text-[10px] text-slate-400 uppercase tracking-tight">{customer.location}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className={`text-sm font-black ${customer.creditBalance > 0 ? 'text-red-600' : 'text-slate-400'}`}>
+                      ₹{customer.creditBalance.toLocaleString()}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm font-black text-slate-900">{customer.loyaltyPoints}</span>
+                      <TrendingUp className="w-3 h-3 text-emerald-500" />
+                    </div>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <StatusBadge status={customer.status} />
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right">
-                    {customer.status === 'pending' ? (
-                      <button 
-                        onClick={() => setShowReviewModal(customer)}
-                        className="px-4 py-1.5 bg-bottle-green text-white rounded-lg text-[11px] font-bold hover:bg-opacity-90 transition-all shadow-sm shadow-green-100"
-                      >
-                        REVIEW & APPROVE
-                      </button>
-                    ) : (
-                      <button 
-                        onClick={() => handleToggleStatus(customer.id)}
-                        className={`text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-md transition-all ${
-                          customer.status === 'blocked' 
-                            ? 'text-green-600 bg-green-50 hover:bg-green-100' 
-                            : 'text-red-600 bg-red-50 hover:bg-red-100'
-                        }`}
-                      >
-                        {customer.status === 'blocked' ? 'Activate Account' : 'Deactivate'}
-                      </button>
-                    )}
+                    <div className="flex items-center justify-end gap-2">
+                      {customer.creditBalance > 0 && (
+                        <button 
+                          onClick={() => alert(`Sending payment QR to ${customer.name}...`)}
+                          className="px-3 py-1.5 bg-slate-900 text-white rounded-lg text-[10px] font-black hover:bg-black transition-all active:scale-95"
+                        >
+                          SEND QR
+                        </button>
+                      )}
+                      {customer.status === 'pending' ? (
+                        <button 
+                          onClick={() => setShowReviewModal(customer)}
+                          className="px-4 py-1.5 bg-bottle-green text-white rounded-lg text-[11px] font-bold hover:bg-opacity-90 transition-all shadow-sm shadow-green-100"
+                        >
+                          REVIEW
+                        </button>
+                      ) : (
+                        <button 
+                          onClick={() => handleToggleStatus(customer.id)}
+                          className={`text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-lg border transition-all ${
+                            customer.status === 'blocked' 
+                              ? 'text-green-600 border-green-200 bg-green-50 hover:bg-green-100' 
+                              : 'text-red-600 border-red-200 bg-red-50 hover:bg-red-100'
+                          }`}
+                        >
+                          {customer.status === 'blocked' ? 'Activate' : 'Block'}
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -487,5 +545,39 @@ const StatusBadge = ({ status }) => {
     </span>
   );
 };
+
+const StatBox = ({ title, value, trend, subtext, icon: Icon, alert }) => (
+  <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-500 group relative overflow-hidden">
+    <div className="relative z-10">
+      <div className="flex justify-between items-start mb-4">
+        <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 ${
+          alert ? 'bg-red-50 text-red-600' : 'bg-slate-50 dark:bg-slate-800 text-[#0a4a34] dark:text-green-400'
+        }`}>
+          {Icon && <Icon className="w-6 h-6" />}
+        </div>
+        {trend && (
+          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${
+            trend.startsWith('+') ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
+          }`}>
+            <TrendingUp className={`w-3 h-3 ${trend.startsWith('+') ? '' : 'rotate-180'}`} />
+            {trend}
+          </div>
+        )}
+      </div>
+      
+      <div>
+        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-1">{title}</p>
+        <div className="flex items-baseline gap-2">
+          <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">{value}</h3>
+          {subtext && <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{subtext}</span>}
+        </div>
+      </div>
+    </div>
+    
+    <div className={`absolute -right-4 -bottom-4 w-24 h-24 rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-700 ${
+      alert ? 'bg-red-500' : 'bg-[#0a4a34]'
+    }`} />
+  </div>
+);
 
 export default Customers;
