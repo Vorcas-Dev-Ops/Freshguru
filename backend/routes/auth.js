@@ -41,7 +41,8 @@ router.post('/login', async (req, res) => {
       admin: {
         id: admin.id,
         email: admin.email,
-        name: admin.name
+        name: admin.name,
+        role: admin.role
       }
     });
   } catch (err) {
@@ -87,7 +88,7 @@ router.get('/verify', async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const result = await db.query('SELECT id, email, name FROM admins WHERE id = $1', [decoded.id]);
+    const result = await db.query('SELECT id, email, name, role FROM admins WHERE id = $1', [decoded.id]);
     
     if (result.rows.length === 0) {
       return res.status(401).json({ message: 'User no longer exists' });

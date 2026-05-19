@@ -38,16 +38,16 @@ router.get('/', async (req, res) => {
 
 // Add new partner (Protected)
 router.post('/', auth, async (req, res) => {
-  const { name, phone, email, shopName, businessName, type, location, referralCode } = req.body;
+  const { name, phone, email, shopName, businessName, type, location, referralCode, imageUrl } = req.body;
   const partnerId = generatePartnerId();
 
   try {
     const result = await db.query(
       `INSERT INTO partners 
-      (partner_id, name, phone, email, shop_name, business_name, type, location, referral_code) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+      (partner_id, name, phone, email, shop_name, business_name, type, location, referral_code, image_url) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
       RETURNING *`,
-      [partnerId, name, phone, email, shopName, businessName, type, location, referralCode]
+      [partnerId, name, phone, email, shopName, businessName, type, location, referralCode, imageUrl]
     );
 
     // Log activity
@@ -88,6 +88,43 @@ router.put('/:id/status', auth, async (req, res) => {
     );
 
     res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get partner orders and metrics
+router.get('/:id/details', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const partnerRes = await db.query('SELECT * FROM partners WHERE id = $1', [id]);
+    if (partnerRes.rows.length === 0) return res.status(404).json({ message: 'Partner not found' });
+    const partner = partnerRes.rows[0];
+
+    // Get orders for this partner (matching by name or shop_name)
+    const ordersRes = await db.query(`
+      SELECT * FROM orders 
+      WHERE customer_name = $1 OR customer_name = $2 
+      ORDER BY created_at DESC
+    `, [partner.name, partner.shop_name]);
+
+    const metricsRes = await db.query(`
+      SELECT 
+        COUNT(*) as total_orders,
+        SUM(total_amount) as total_spent
+      FROM orders 
+      WHERE customer_name = $1 OR customer_name = $2
+    `, [partner.name, partner.shop_name]);
+
+    res.json({
+      partner,
+      orders: ordersRes.rows,
+      metrics: {
+        total_orders: parseInt(metricsRes.rows[0].total_orders) || 0,
+        total_spent: parseFloat(metricsRes.rows[0].total_spent) || 0
+      }
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });

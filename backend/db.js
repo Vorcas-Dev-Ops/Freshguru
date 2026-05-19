@@ -1,5 +1,5 @@
 const { Pool } = require('pg');
-require('dotenv').config();
+require('dotenv').config({ path: __dirname + '/.env' });
 
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -21,6 +21,7 @@ const initDb = async () => {
         email VARCHAR(255) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
         name VARCHAR(255) NOT NULL,
+        role VARCHAR(50) DEFAULT 'Main Admin',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
@@ -83,6 +84,7 @@ const initDb = async () => {
         id SERIAL PRIMARY KEY,
         sku VARCHAR(50) UNIQUE NOT NULL,
         name VARCHAR(255) NOT NULL,
+        hsn VARCHAR(50),
         category VARCHAR(100) NOT NULL,
         purchase_price DECIMAL(15,2) DEFAULT 0.00,
         retail_price DECIMAL(15,2) DEFAULT 0.00,
@@ -90,8 +92,10 @@ const initDb = async () => {
         unit VARCHAR(50) DEFAULT 'kg',
         quantity INTEGER DEFAULT 0,
         min_quantity INTEGER DEFAULT 1,
+        tax_type VARCHAR(50) DEFAULT 'GST 5%',
         enabled BOOLEAN DEFAULT TRUE,
         image_url TEXT,
+        description TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
@@ -130,12 +134,81 @@ const initDb = async () => {
       );
     `);
 
+    // Create orders table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS orders (
+        id SERIAL PRIMARY KEY,
+        order_id VARCHAR(50) UNIQUE NOT NULL,
+        customer_name VARCHAR(255) NOT NULL,
+        delivery_location TEXT NOT NULL,
+        total_amount DECIMAL(15,2) NOT NULL,
+        loyalty_points INTEGER DEFAULT 0,
+        status VARCHAR(50) DEFAULT 'Ready for Dispatch',
+        driver_id INTEGER REFERENCES drivers(id) ON DELETE SET NULL,
+        delivery_slot VARCHAR(100),
+        zone VARCHAR(100),
+        dispatch_time TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
     // Ensure columns exist (Manual migration for existing tables)
     try {
+      await client.query('ALTER TABLE partners ADD COLUMN IF NOT EXISTS image_url TEXT');
       await client.query('ALTER TABLE expenses ADD COLUMN IF NOT EXISTS added_by VARCHAR(255)');
       await client.query('ALTER TABLE expenses ADD COLUMN IF NOT EXISTS edited_by VARCHAR(255)');
+      await client.query('ALTER TABLE admins ADD COLUMN IF NOT EXISTS role VARCHAR(50) DEFAULT \'Main Admin\'');
+      
+      // Product table migrations
+      await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS hsn VARCHAR(50)');
+      await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS tax_type VARCHAR(50) DEFAULT \'GST 5%\'');
+      await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS description TEXT');
+      await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS sales_count INTEGER DEFAULT 0');
+      await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS min_order_qty DECIMAL(10,2) DEFAULT 1.0');
+
+      // Order table migrations
+      await client.query('ALTER TABLE orders ADD COLUMN IF NOT EXISTS zone VARCHAR(100)');
+      await client.query('ALTER TABLE orders ADD COLUMN IF NOT EXISTS delivery_slot VARCHAR(100)');
+
+      // Create order_items table
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS order_items (
+          id SERIAL PRIMARY KEY,
+          order_id INTEGER REFERENCES orders(id) ON DELETE CASCADE,
+          product_id INTEGER REFERENCES products(id),
+          product_name VARCHAR(255),
+          quantity DECIMAL(10,2) NOT NULL,
+          unit VARCHAR(50),
+          price_at_order DECIMAL(15,2) NOT NULL
+        );
+      `);
+
+      // Create backups table
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS backups (
+          id SERIAL PRIMARY KEY,
+          filename VARCHAR(255) NOT NULL,
+          type VARCHAR(50) NOT NULL,
+          size BIGINT,
+          status VARCHAR(50) DEFAULT 'Success',
+          storage_location VARCHAR(100) DEFAULT 'Local',
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+
+      // Create notifications table
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS notifications (
+          id SERIAL PRIMARY KEY,
+          type VARCHAR(100) NOT NULL,
+          title VARCHAR(255) NOT NULL,
+          message TEXT NOT NULL,
+          read BOOLEAN DEFAULT FALSE,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
     } catch (e) {
-      console.log('Columns might already exist');
+      console.log('Columns might already exist or error during migration:', e.message);
     }
 
     await client.query('COMMIT');
