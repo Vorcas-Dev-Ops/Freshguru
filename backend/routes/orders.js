@@ -164,4 +164,54 @@ router.put('/:id/location', async (req, res) => {
   }
 });
 
+// Add manual sale / new order
+router.post('/', async (req, res) => {
+  const { 
+    orderId, 
+    customerName, 
+    totalAmount, 
+    paymentStatus, 
+    paymentMethod, 
+    zone, 
+    deliverySlot,
+    status 
+  } = req.body;
+
+  try {
+    // 1. Try to find the partner's location to use as delivery_location
+    const partnerSearch = await db.query(
+      'SELECT location FROM partners WHERE name = $1 LIMIT 1',
+      [customerName]
+    );
+    const deliveryLocation = partnerSearch.rows.length > 0 
+      ? partnerSearch.rows[0].location 
+      : (zone || 'Default Location');
+
+    // 2. Insert into orders table
+    const result = await db.query(
+      `INSERT INTO orders 
+       (order_id, customer_name, delivery_location, total_amount, loyalty_points, status, delivery_slot, zone, payment_status, payment_method)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+       RETURNING *`,
+      [
+        orderId || `FG-ORD-${Math.floor(Math.random() * 9000) + 1000}`,
+        customerName,
+        deliveryLocation,
+        Number(totalAmount),
+        Math.round(Number(totalAmount) / 100),
+        status || 'Delivered',
+        deliverySlot || 'Morning (9AM-12PM)',
+        zone || 'Central Delhi',
+        paymentStatus || 'Paid',
+        paymentMethod || 'UPI'
+      ]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error adding manual sale:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router;

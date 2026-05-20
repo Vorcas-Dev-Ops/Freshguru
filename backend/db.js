@@ -128,11 +128,16 @@ const initDb = async () => {
         status VARCHAR(50) DEFAULT 'Active',
         vehicle VARCHAR(100),
         contact VARCHAR(255),
-        username VARCHAR(100) UNIQUE NOT NULL,
+        username VARCHAR(100) UNIQUE,
         password VARCHAR(255) NOT NULL,
         total_orders INTEGER DEFAULT 0,
         rating DECIMAL(3,1) DEFAULT 5.0,
         image_url TEXT,
+        email VARCHAR(255) UNIQUE,
+        aadhaar TEXT,
+        vehicle_rc TEXT,
+        driving_licence TEXT,
+        vehicle_type VARCHAR(100),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
@@ -166,6 +171,8 @@ const initDb = async () => {
         driver_id INTEGER REFERENCES drivers(id) ON DELETE SET NULL,
         delivery_slot VARCHAR(100),
         zone VARCHAR(100),
+        payment_status VARCHAR(50),
+        payment_method VARCHAR(50),
         dispatch_time TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
@@ -185,9 +192,18 @@ const initDb = async () => {
       await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS sales_count INTEGER DEFAULT 0');
       await client.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS min_order_qty DECIMAL(10,2) DEFAULT 1.0');
 
-      // Order table migrations
       await client.query('ALTER TABLE orders ADD COLUMN IF NOT EXISTS zone VARCHAR(100)');
       await client.query('ALTER TABLE orders ADD COLUMN IF NOT EXISTS delivery_slot VARCHAR(100)');
+      await client.query('ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_status VARCHAR(50)');
+      await client.query('ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_method VARCHAR(50)');
+
+      // Drivers table migrations
+      await client.query('ALTER TABLE drivers ADD COLUMN IF NOT EXISTS email VARCHAR(255) UNIQUE');
+      await client.query('ALTER TABLE drivers ADD COLUMN IF NOT EXISTS aadhaar TEXT');
+      await client.query('ALTER TABLE drivers ADD COLUMN IF NOT EXISTS vehicle_rc TEXT');
+      await client.query('ALTER TABLE drivers ADD COLUMN IF NOT EXISTS driving_licence TEXT');
+      await client.query('ALTER TABLE drivers ADD COLUMN IF NOT EXISTS vehicle_type VARCHAR(100)');
+      await client.query('ALTER TABLE drivers ALTER COLUMN username DROP NOT NULL');
 
       // Create order_items table
       await client.query(`
@@ -223,6 +239,25 @@ const initDb = async () => {
           title VARCHAR(255) NOT NULL,
           message TEXT NOT NULL,
           read BOOLEAN DEFAULT FALSE,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+
+      // Create farm_inventory table
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS farm_inventory (
+          id VARCHAR(50) PRIMARY KEY,
+          date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          name VARCHAR(255) NOT NULL,
+          category VARCHAR(100) NOT NULL,
+          source VARCHAR(255) NOT NULL,
+          qty DECIMAL(15,2) NOT NULL,
+          push_qty DECIMAL(15,2) NOT NULL,
+          unit VARCHAR(50) NOT NULL,
+          purchase_rate DECIMAL(15,2) NOT NULL,
+          target_price DECIMAL(15,2) NOT NULL,
+          status VARCHAR(50) DEFAULT 'Pending',
+          image_url TEXT,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
       `);

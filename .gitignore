@@ -1,4 +1,6 @@
+# =========================
 # Logs
+# =========================
 logs
 *.log
 npm-debug.log*
@@ -7,28 +9,56 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Root level ignores
+# =========================
+# Root Level
+# =========================
 node_modules/
 dist/
 dist-ssr/
+.vite/
 *.local
 
-# Frontend subdirectory ignores
+# Environment files
+.env
+.env.local
+
+# =========================
+# Frontend
+# =========================
 frontend/node_modules/
 frontend/dist/
+frontend/.vite/
 frontend/.env
 frontend/.env.local
 
-# Backend subdirectory ignores
+# =========================
+# Backend
+# =========================
 backend/node_modules/
 backend/backups/*
 backend/.env
 
-# Editor directories and files
+# =========================
+# Build / Cache
+# =========================
+coverage/
+.cache/
+temp/
+tmp/
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# IDE / Editor Files
+# =========================
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
+
+.idea/
 *.suo
 *.ntvs*
 *.njsproj

@@ -52,7 +52,11 @@ const Delivery = () => {
   const [newDriver, setNewDriver] = useState({
     name: '',
     contact: '',
-    username: '',
+    email: '',
+    aadhaar: '',
+    vehicleRc: '',
+    drivingLicence: '',
+    vehicleType: 'Two Wheeler',
     password: '',
     imageUrl: ''
   });
@@ -223,7 +227,17 @@ const Delivery = () => {
         showNotification('New driver registered successfully!');
         fetchDrivers();
         setShowAddDriverModal(false);
-        setNewDriver({ name: '', contact: '', username: '', password: '', imageUrl: '' });
+        setNewDriver({
+          name: '',
+          contact: '',
+          email: '',
+          aadhaar: '',
+          vehicleRc: '',
+          drivingLicence: '',
+          vehicleType: 'Two Wheeler',
+          password: '',
+          imageUrl: ''
+        });
       } else {
         const data = await response.json();
         showNotification(data.message || 'Failed to register driver', 'error');
@@ -839,7 +853,7 @@ const Delivery = () => {
       {/* 👤 Add Driver Modal */}
       {showAddDriverModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-slate-100 dark:border-slate-800">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-4xl rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-slate-100 dark:border-slate-800">
             <div className="px-10 py-8 border-b border-slate-50 dark:border-slate-800 flex justify-between items-center bg-slate-50/30 dark:bg-slate-800/20">
               <div>
                 <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">Fleet Registration</h3>
@@ -850,79 +864,187 @@ const Delivery = () => {
               </button>
             </div>
             
-            <form onSubmit={handleAddDriver} className="p-10 space-y-6">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Full Name</label>
-                  <input 
-                    className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl text-[13px] font-bold outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all"
-                    placeholder="e.g. Rahul Sharma"
-                    value={newDriver.name}
-                    onChange={(e) => setNewDriver({...newDriver, name: e.target.value})}
-                    required
-                  />
+            <form onSubmit={handleAddDriver} className="max-h-[75vh] overflow-y-auto custom-scrollbar p-10 space-y-8">
+              {/* Section 1: Personal Details */}
+              <div className="space-y-4">
+                <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest border-b border-slate-50 dark:border-slate-800 pb-2">1. Personal Information</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2 md:col-span-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Full Name</label>
+                    <input 
+                      className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl text-[13px] font-bold outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all"
+                      placeholder="Rahul Sharma"
+                      value={newDriver.name}
+                      onChange={(e) => setNewDriver({...newDriver, name: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Mobile Number</label>
+                    <input 
+                      className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl text-[13px] font-bold outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all"
+                      placeholder="+91 98765 43210"
+                      value={newDriver.contact}
+                      onChange={(e) => setNewDriver({...newDriver, contact: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Email Address</label>
+                    <input 
+                      type="email"
+                      className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl text-[13px] font-bold outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all"
+                      placeholder="rahul@freshguru.in"
+                      value={newDriver.email}
+                      onChange={(e) => setNewDriver({...newDriver, email: e.target.value})}
+                      required
+                    />
+                  </div>
                 </div>
+
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Contact No.</label>
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Profile Photo</label>
                   <input 
-                    className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl text-[13px] font-bold outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all"
-                    placeholder="+91 XXXXX XXXXX"
-                    value={newDriver.contact}
-                    onChange={(e) => setNewDriver({...newDriver, contact: e.target.value})}
-                    required
+                    type="file"
+                    accept="image/*"
+                    className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl text-[13px] font-bold outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setNewDriver({...newDriver, imageUrl: reader.result});
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Profile Photo</label>
-                <input 
-                  type="file"
-                  accept="image/*"
-                  className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl text-[13px] font-bold outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        setNewDriver({...newDriver, imageUrl: reader.result});
-                      };
-                      reader.readAsDataURL(file);
-                    }
-                  }}
-                />
+              {/* Section 2: Documents & Fleet Details */}
+              <div className="space-y-4">
+                <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest border-b border-slate-50 dark:border-slate-800 pb-2">2. Documents & Fleet Details</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Vehicle Type</label>
+                    <select 
+                      className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl text-[13px] font-bold outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all appearance-none"
+                      value={newDriver.vehicleType}
+                      onChange={(e) => setNewDriver({...newDriver, vehicleType: e.target.value})}
+                      required
+                    >
+                      <option value="Two Wheeler">Two Wheeler</option>
+                      <option value="Three Wheeler">Three Wheeler</option>
+                      <option value="Four Wheeler (Mini Truck)">Four Wheeler (Mini Truck)</option>
+                      <option value="Truck">Truck</option>
+                      <option value="Reefer Van">Reefer Van</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Vehicle RC</label>
+                    <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-4 cursor-pointer transition-all ${
+                      newDriver.vehicleRc ? 'border-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/10' : 'border-slate-200 hover:border-emerald-500'
+                    }`}>
+                      <span className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">
+                        {newDriver.vehicleRc ? '✓ Vehicle RC Uploaded' : 'Upload Vehicle RC'}
+                      </span>
+                      <input 
+                        type="file" 
+                        accept="image/*,.pdf" 
+                        className="hidden" 
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setNewDriver({...newDriver, vehicleRc: reader.result});
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Aadhaar Card</label>
+                    <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-4 cursor-pointer transition-all ${
+                      newDriver.aadhaar ? 'border-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/10' : 'border-slate-200 hover:border-emerald-500'
+                    }`}>
+                      <span className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">
+                        {newDriver.aadhaar ? '✓ Aadhaar Uploaded' : 'Upload Aadhaar Card'}
+                      </span>
+                      <input 
+                        type="file" 
+                        accept="image/*,.pdf" 
+                        className="hidden" 
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setNewDriver({...newDriver, aadhaar: reader.result});
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Driving Licence</label>
+                    <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-4 cursor-pointer transition-all ${
+                      newDriver.drivingLicence ? 'border-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/10' : 'border-slate-200 hover:border-emerald-500'
+                    }`}>
+                      <span className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">
+                        {newDriver.drivingLicence ? '✓ Licence Uploaded' : 'Upload Driving Licence'}
+                      </span>
+                      <input 
+                        type="file" 
+                        accept="image/*,.pdf" 
+                        className="hidden" 
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setNewDriver({...newDriver, drivingLicence: reader.result});
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+                </div>
               </div>
 
-              <div className="h-px bg-slate-100 dark:bg-slate-800 my-4" />
-              <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Driver App Credentials</p>
-
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Username</label>
-                  <input 
-                    className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl text-[13px] font-bold outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all"
-                    placeholder="rahul_fg"
-                    value={newDriver.username}
-                    onChange={(e) => setNewDriver({...newDriver, username: e.target.value})}
-                    required
-                  />
-                </div>
+              {/* Section 3: Driver App Credentials */}
+              <div className="space-y-4">
+                <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest border-b border-slate-50 dark:border-slate-800 pb-2">3. Driver App Credentials</p>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Password</label>
                   <input 
                     type="password"
                     className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl text-[13px] font-bold outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all"
-                    placeholder="••••••••"
+                    placeholder="Set Login Password for Driver"
                     value={newDriver.password}
                     onChange={(e) => setNewDriver({...newDriver, password: e.target.value})}
                     required
                   />
+                  <p className="text-[8px] text-slate-400 font-bold uppercase tracking-wider block ml-1 mt-1">
+                    Drivers will use either their Mobile Number or Email along with this password to log in.
+                  </p>
                 </div>
               </div>
 
               <button 
                 type="submit" 
-                className="w-full py-5 text-[11px] font-black text-white bg-emerald-600 hover:bg-emerald-700 rounded-2xl shadow-xl shadow-emerald-900/10 uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-3"
+                className="w-full py-5 text-[11px] font-black text-white bg-emerald-600 hover:bg-emerald-700 rounded-2xl shadow-xl shadow-emerald-900/10 uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-3 mt-4"
               >
                 <UserPlus className="w-5 h-5" />
                 Finalize Registration

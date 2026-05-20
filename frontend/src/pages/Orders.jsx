@@ -77,8 +77,8 @@ const Orders = () => {
           const orderDate = new Date(o.created_at);
           const timeAgo = orderDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) + ' ' + orderDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 
-          const paymentStatus = o.order_id.endsWith('30') || o.order_id.endsWith('8') ? 'Paid' : 'Credit';
-          const paymentMethod = paymentStatus === 'Paid' ? (o.order_id.endsWith('30') ? 'UPI' : (o.order_id.endsWith('8') ? 'Card' : 'Cash')) : 'Credit';
+          const paymentStatus = o.payment_status || (o.order_id.endsWith('30') || o.order_id.endsWith('8') ? 'Paid' : 'Credit');
+          const paymentMethod = o.payment_method || (paymentStatus === 'Paid' ? (o.order_id.endsWith('30') ? 'UPI' : (o.order_id.endsWith('8') ? 'Card' : 'Cash')) : 'Credit');
 
           return {
             id: o.order_id,
@@ -121,39 +121,72 @@ const Orders = () => {
     setRejectConfirm(null);
   };
 
-  const handleAddSale = (e) => {
+  const handleAddSale = async (e) => {
     e.preventDefault();
     if (!newSale.customer || !newSale.amount) return;
 
     const mockId = `FG-ORD-${Math.floor(Math.random() * 9000) + 1000}`;
-    const newEntry = {
-      id: mockId,
-      time: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) + ' ' + new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
-      partner: newSale.customer,
-      contact: newSale.customer,
-      health: 'ALL IN STOCK',
-      amount: `₹${parseFloat(newSale.amount).toLocaleString('en-IN')}`,
-      rawAmount: parseFloat(newSale.amount),
-      status: 'Delivered', // automatically show in delivered table
-      route: newSale.route,
-      slot: 'Morning (9AM-12PM)',
-      driver: 'Unassigned',
+    const payload = {
+      orderId: mockId,
+      customerName: newSale.customer,
+      totalAmount: parseFloat(newSale.amount),
       paymentStatus: newSale.paymentStatus,
       paymentMethod: newSale.paymentStatus === 'Paid' ? newSale.paymentMethod : 'Credit',
-      points: Math.round(parseFloat(newSale.amount) / 100),
-      invoiceGenerated: false
+      zone: newSale.route,
+      deliverySlot: 'Morning (9AM-12PM)',
+      status: 'Delivered'
     };
 
-    setOrders([newEntry, ...orders]);
-    setIsAddSaleOpen(false);
-    showNotification('Manual sale added successfully!');
-    setNewSale({
-      customer: '',
-      amount: '',
-      paymentStatus: 'Paid',
-      paymentMethod: 'UPI',
-      route: 'Central Delhi'
-    });
+    try {
+      const response = await fetch('http://localhost:5055/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        const o = await response.json();
+        const orderDate = new Date(o.created_at);
+        const timeAgo = orderDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) + ' ' + orderDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+        const newEntry = {
+          id: o.order_id,
+          time: timeAgo,
+          partner: o.customer_name,
+          contact: o.customer_name,
+          health: 'ALL IN STOCK',
+          amount: `₹${parseFloat(o.total_amount).toLocaleString('en-IN')}`,
+          rawAmount: parseFloat(o.total_amount),
+          status: o.status,
+          route: o.zone || 'Central Delhi',
+          slot: o.delivery_slot || 'Morning (9AM-12PM)',
+          driver: null,
+          paymentStatus: o.payment_status || 'Paid',
+          paymentMethod: o.payment_method || 'UPI',
+          points: o.loyalty_points || Math.round(parseFloat(o.total_amount) / 100),
+          invoiceGenerated: false
+        };
+
+        setOrders([newEntry, ...orders]);
+        setIsAddSaleOpen(false);
+        showNotification('Manual sale added successfully!');
+        setNewSale({
+          customer: '',
+          amount: '',
+          paymentStatus: 'Paid',
+          paymentMethod: 'UPI',
+          route: 'Central Delhi'
+        });
+      } else {
+        const errorData = await response.json();
+        showNotification(errorData.message || 'Failed to add manual sale', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showNotification('Connection error', 'error');
+    }
   };
 
   const filteredOrders = orders.filter(o => {

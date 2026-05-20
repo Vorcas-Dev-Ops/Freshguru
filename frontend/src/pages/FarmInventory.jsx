@@ -30,13 +30,42 @@ const FarmInventory = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pushDirectly, setPushDirectly] = useState(false);
   
-  // Default ledger mock data
+  const fetchLedger = async () => {
+    try {
+      const token = localStorage.getItem('admin_token');
+      const response = await fetch('http://localhost:5055/api/farm-inventory', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        const mapped = data.map(item => ({
+          id: item.id,
+          date: item.date,
+          name: item.name,
+          category: item.category,
+          source: item.source,
+          qty: Number(item.qty),
+          pushQty: Number(item.push_qty) || Number(item.qty),
+          unit: item.unit,
+          purchase: Number(item.purchase_rate),
+          sale: Number(item.target_price),
+          status: item.status,
+          image_url: item.image_url
+        }));
+        setLedger(mapped);
+      } else {
+        showNotification('Failed to fetch farm inventory ledger.', 'error');
+      }
+    } catch (err) {
+      console.error('Fetch ledger error:', err);
+      showNotification('Network error fetching ledger.', 'error');
+    }
+  };
+
   useEffect(() => {
-    setLedger([
-      { id: 'FP-1042', date: new Date().toISOString(), name: 'Fresh Red Tomatoes', category: 'Vegetables', source: 'Ramesh Farms, Block A', qty: 500, pushQty: 500, unit: 'kg', purchase: 18, sale: 28, status: 'Pushed' },
-      { id: 'FP-1041', date: new Date(Date.now() - 86400000).toISOString(), name: 'Green Apples', category: 'Fruits', source: 'Valley Orchards', qty: 200, pushQty: 200, unit: 'Box', purchase: 450, sale: 600, status: 'Pending' },
-      { id: 'FP-1040', date: new Date(Date.now() - 172800000).toISOString(), name: 'Organic Potatoes', category: 'Vegetables', source: 'Kisan Co-op', qty: 1000, pushQty: 800, unit: 'kg', purchase: 12, sale: 22, status: 'Pending' },
-    ]);
+    fetchLedger();
   }, []);
 
   const [formData, setFormData] = useState({
@@ -59,88 +88,82 @@ const FarmInventory = () => {
     setTimeout(() => setNotification(null), 3000);
   };
 
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+  };
+
   const handleAddToLedger = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.qty || !formData.purchaseRate || !formData.targetPrice) return;
 
     setLoading(true);
-    let status = 'Pending';
+    const token = localStorage.getItem('admin_token');
     const entryId = `FP-${Math.floor(Math.random() * 9000) + 1000}`;
 
-    if (pushDirectly) {
-      const token = localStorage.getItem('admin_token');
-      const payload = {
-        sku: `FARM-${formData.category.substring(0,3).toUpperCase()}-${Math.floor(Math.random()*10000)}`,
-        name: formData.name, 
-        category: formData.category, 
-        purchasePrice: Number(formData.purchaseRate) || 0, 
-        retailPrice: Number(formData.targetPrice) || 0, 
-        unit: formData.unit || 'kg', 
-        quantity: Number(formData.qty) || 0, 
-        minQuantity: 10, 
-        minOrderQty: 1, 
-        imageUrl: '', 
-        description: `Procured from: ${formData.source} on ${formData.date}`,
-        hsn: '',
-        discount: 0,
-        taxType: 'GST 5%',
-        enabled: true
-      };
-
+    let base64Image = null;
+    if (formData.image) {
       try {
-        const response = await fetch('http://localhost:5055/api/inventory/products', { 
-          method: 'POST', 
-          headers: { 
-            'Content-Type': 'application/json', 
-            'Authorization': `Bearer ${token}` 
-          }, 
-          body: JSON.stringify(payload) 
-        });
-
-        if (response.ok) {
-          status = 'Pushed';
-        } else {
-           showNotification('Failed to push to main inventory. Added as Pending.', 'error');
-        }
+        base64Image = await fileToBase64(formData.image);
       } catch (err) {
-         showNotification('Network error during push. Added as Pending.', 'error');
+        console.error('Image convert error:', err);
       }
     }
 
-    // Add to local ledger
-    const newEntry = {
+    const payload = {
       id: entryId,
-      date: new Date(formData.date).toISOString(),
       name: formData.name,
       category: formData.category,
-      source: formData.source || 'Direct Farm',
-      qty: parseFloat(formData.qty),
-      pushQty: parseFloat(formData.qty),
+      source: formData.source,
+      date: formData.date,
+      qty: Number(formData.qty),
       unit: formData.unit,
-      purchase: parseFloat(formData.purchaseRate),
-      sale: parseFloat(formData.targetPrice),
-      status: status
+      purchaseRate: Number(formData.purchaseRate),
+      targetPrice: Number(formData.targetPrice),
+      image: base64Image,
+      pushDirectly
     };
-    
-    setLedger(prev => [newEntry, ...prev]);
-    showNotification(status === 'Pushed' ? 'Stock Added and Pushed successfully!' : 'Produce added to Farm Ledger!');
 
-    setLoading(false);
-    setIsModalOpen(false);
-    
-    // Reset form
-    setFormData({
-      name: '',
-      category: 'Vegetables',
-      source: '',
-      date: new Date().toISOString().split('T')[0],
-      qty: '',
-      unit: 'kg',
-      purchaseRate: '',
-      targetPrice: '',
-      image: null
-    });
-    setPushDirectly(false);
+    try {
+      const response = await fetch('http://localhost:5055/api/farm-inventory', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        showNotification(pushDirectly ? 'Stock Added and Pushed successfully!' : 'Produce added to Farm Ledger!');
+        await fetchLedger();
+        setIsModalOpen(false);
+        setFormData({
+          name: '',
+          category: 'Vegetables',
+          source: '',
+          date: new Date().toISOString().split('T')[0],
+          qty: '',
+          unit: 'kg',
+          purchaseRate: '',
+          targetPrice: '',
+          image: null
+        });
+        setPushDirectly(false);
+      } else {
+        const errData = await response.json();
+        showNotification(errData.message || 'Failed to add inward stock.', 'error');
+      }
+    } catch (err) {
+      console.error('Add ledger error:', err);
+      showNotification('Network error.', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const updatePushQty = (id, newQty) => {
@@ -160,45 +183,30 @@ const FarmInventory = () => {
 
     setSyncing(true);
     const token = localStorage.getItem('admin_token');
-    
-    const payload = {
-      sku: `FARM-${item.category.substring(0,3).toUpperCase()}-${Math.floor(Math.random()*10000)}`,
-      name: item.name, 
-      category: item.category, 
-      purchasePrice: Number(item.purchase) || 0, 
-      retailPrice: Number(item.sale) || 0, 
-      unit: item.unit || 'kg', 
-      quantity: Number(item.pushQty) || 0, 
-      minQuantity: 10, 
-      minOrderQty: 1, 
-      imageUrl: '', 
-      description: `Procured from: ${item.source} on ${new Date(item.date).toLocaleDateString()}`,
-      hsn: '',
-      discount: 0,
-      taxType: 'GST 5%',
-      enabled: true
-    };
 
     try {
-      const response = await fetch('http://localhost:5055/api/inventory/products', { 
-        method: 'POST', 
-        headers: { 
-          'Content-Type': 'application/json', 
-          'Authorization': `Bearer ${token}` 
-        }, 
-        body: JSON.stringify(payload) 
+      const response = await fetch(`http://localhost:5055/api/farm-inventory/${id}/push`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ pushQty: item.pushQty })
       });
 
       if (response.ok) {
         showNotification('Successfully pushed to Main Inventory!');
-        setLedger(prev => prev.map(l => l.id === id ? { ...l, status: 'Pushed' } : l));
+        await fetchLedger();
       } else {
-        showNotification('Failed to push item to inventory', 'error');
+        const errData = await response.json();
+        showNotification(errData.message || 'Failed to push item to inventory', 'error');
       }
     } catch (err) {
+      console.error('Push error:', err);
       showNotification('Network error.', 'error');
+    } finally {
+      setSyncing(false);
     }
-    setSyncing(false);
   };
 
   return (

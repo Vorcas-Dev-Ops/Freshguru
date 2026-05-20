@@ -14,6 +14,7 @@ const insightsRoutes = require('./routes/insights');
 const backupRoutes = require('./routes/backup');
 const logsRoutes = require('./routes/logs');
 const notificationsRoutes = require('./routes/notifications');
+const farmInventoryRoutes = require('./routes/farmInventory');
 require('dotenv').config();
 
 const app = express();
@@ -43,6 +44,7 @@ app.use('/api/insights', insightsRoutes);
 app.use('/api/backup', backupRoutes);
 app.use('/api/logs', logsRoutes);
 app.use('/api/notifications', notificationsRoutes);
+app.use('/api/farm-inventory', farmInventoryRoutes);
 
 // Seed Categories Function
 const seedCategories = async () => {
@@ -56,7 +58,8 @@ const seedCategories = async () => {
 const seedAdmins = async () => {
   const admins = [
     { name: 'Admin One', email: 'admin1@freshguru.in', password: 'adminpassword1' },
-    { name: 'Admin Two', email: 'admin2@freshguru.in', password: 'adminpassword2' }
+    { name: 'Admin Two', email: 'admin2@freshguru.in', password: 'adminpassword2' },
+    { name: 'Admin Three', email: 'admin3@freshguru.in', password: 'adminpassword3' }
   ];
 
   for (const admin of admins) {
