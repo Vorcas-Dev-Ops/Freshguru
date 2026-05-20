@@ -314,7 +314,7 @@ const Orders = () => {
             </div>
             <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">Delivery History</h2>
           </div>
-          <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Enterprise Transaction Management & Order Lifecycle Controls</p>
+          <p className="text-slate-400 text-sm font-bold tracking-widest">Enterprise Transaction Management & Order Lifecycle Controls</p>
         </div>
 
         <div className="flex items-center gap-3 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">

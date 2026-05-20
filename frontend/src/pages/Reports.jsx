@@ -635,7 +635,7 @@ const Reports = () => {
               </div>
               <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">Analytical Hub</h2>
             </div>
-            <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">Enterprise Intelligence Hub & Business Performance Analytics</p>
+            <p className="text-slate-400 text-[10px] font-black tracking-[0.2em]">Enterprise Intelligence Hub & Business Performance Analytics</p>
           </div>
           
           <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-100 dark:border-slate-700 h-12">

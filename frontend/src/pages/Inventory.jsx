@@ -277,7 +277,7 @@ const Inventory = () => {
             <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">Inventory Console</h2>
             <span className="px-2.5 py-0.5 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-md text-[9px] font-black uppercase tracking-widest border border-emerald-100/50">v1.2.4 Live</span>
           </div>
-          <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Enterprise Stock Operations & Global Repository Control</p>
+          <p className="text-slate-400 text-sm font-bold tracking-widest">Enterprise Stock Operations & Global Repository Control</p>
         </div>
 
         <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto">
@@ -287,13 +287,6 @@ const Inventory = () => {
           >
             <Settings className="w-4 h-4" /> 
             Manage Categories
-          </button>
-          <button 
-            onClick={() => setShowPurchaseModal(true)} 
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 bg-slate-900 dark:bg-slate-800 text-white rounded-2xl text-xs font-bold hover:bg-black dark:hover:bg-slate-700 transition-all shadow-xl active:scale-95 group whitespace-nowrap"
-          >
-            <ShoppingBasket className="w-4 h-4 group-hover:rotate-12 transition-transform" /> 
-            Record Purchase
           </button>
           <button 
             onClick={openAddModal} 

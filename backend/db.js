@@ -1,5 +1,24 @@
 const { Pool } = require('pg');
-require('dotenv').config({ path: __dirname + '/.env' });
+const path = require('path');
+const fs = require('fs');
+
+const dotenvPath = path.join(__dirname, '.env');
+console.log('Dotenv path:', dotenvPath);
+console.log('Dotenv file exists:', fs.existsSync(dotenvPath));
+if (fs.existsSync(dotenvPath)) {
+  console.log('Dotenv contents:\n', fs.readFileSync(dotenvPath, 'utf8'));
+}
+
+require('dotenv').config({ path: dotenvPath, override: true });
+
+console.log('Database config debug:', {
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  passwordType: typeof process.env.DB_PASSWORD,
+  passwordVal: process.env.DB_PASSWORD ? `[length: ${process.env.DB_PASSWORD.length}]` : 'undefined',
+  port: process.env.DB_PORT,
+});
 
 const pool = new Pool({
   user: process.env.DB_USER,

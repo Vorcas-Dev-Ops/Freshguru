@@ -24,7 +24,7 @@ const InsightsHeader = ({ title, subtitle, onExportExcel, onExportPDF }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const reports = [
-    { label: 'Business Overview', path: '/insights/overview', icon: LayoutDashboard },
+    { label: 'Real-Time Overview', path: '/insights/overview', icon: LayoutDashboard },
     { label: 'Sales Analytics', path: '/insights/sales', icon: TrendingUp },
     { label: 'Inventory Insights', path: '/insights/inventory', icon: Package },
     { label: 'Customer Insights', path: '/insights/customers', icon: Users },
@@ -49,7 +49,7 @@ const InsightsHeader = ({ title, subtitle, onExportExcel, onExportPDF }) => {
           </div>
           <div>
             <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter leading-none">{title}</h2>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-1.5">{subtitle || 'Enterprise Business Intelligence'}</p>
+            <p className="text-[10px] font-black text-slate-400 tracking-[0.2em] mt-1.5">{subtitle || 'Enterprise Business Intelligence'}</p>
           </div>
         </div>
 

@@ -40,8 +40,8 @@ const BusinessOverview = () => {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       <InsightsHeader 
-        title="Business Overview" 
-        subtitle="Real-time Command Center & Store Intelligence"
+        title="Real-Time Overview" 
+        subtitle="Real-Time Command Center & Store Intelligence"
       />
 
       {/* KPI Cards */}

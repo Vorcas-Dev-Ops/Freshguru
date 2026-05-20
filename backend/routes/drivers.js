@@ -7,7 +7,7 @@ const auth = require('../middleware/auth');
 // Get all drivers
 router.get('/', async (req, res) => {
   try {
-    const result = await db.query('SELECT id, driver_id, name, status, vehicle, contact, total_orders, rating, image_url FROM drivers ORDER BY created_at DESC');
+    const result = await db.query('SELECT id, driver_id, name, username, status, vehicle, contact, total_orders, rating, image_url FROM drivers ORDER BY created_at DESC');
     res.json(result.rows);
   } catch (err) {
     console.error(err);

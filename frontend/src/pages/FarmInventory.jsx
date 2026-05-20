@@ -212,7 +212,7 @@ const FarmInventory = () => {
             </div>
             <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">Farm Procurement</h2>
           </div>
-          <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Inward Farm Stock & Inventory Sync</p>
+          <p className="text-slate-400 text-sm font-bold tracking-widest">Inward Farm Stock & Inventory Sync</p>
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}

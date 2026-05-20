@@ -59,7 +59,7 @@ const Settings = () => {
             </div>
             <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tighter">System Configuration</h2>
           </div>
-          <p className="text-slate-400 text-[11px] font-black uppercase tracking-[0.2em] ml-1">Enterprise ERP Management Console</p>
+          <p className="text-slate-400 text-[11px] font-black tracking-[0.2em] ml-1">Enterprise ERP Management Console</p>
         </div>
         <button 
           onClick={handleSave}

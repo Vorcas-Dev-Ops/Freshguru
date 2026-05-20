@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import logo from '../assets/logo.png';
 import { 
   Printer, 
   ArrowLeft,
@@ -10,7 +9,8 @@ import {
   MessageSquare,
   QrCode,
   TrendingUp,
-  DollarSign
+  DollarSign,
+  Leaf
 } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 
@@ -156,7 +156,10 @@ const Invoice = () => {
           {/* HEADER SECTION */}
           <div className="flex justify-between items-start mb-12">
             <div>
-              <img src={logo} alt="Fresh Guru Logo" className="h-14 object-contain mb-2" />
+              <div className="flex items-center gap-2 mb-2 select-none">
+                <Leaf className="w-6 h-6 text-emerald-600 shrink-0" />
+                <span className="text-xl font-black text-slate-900 tracking-wider logo-font">FRESH <span className="text-emerald-600 font-extrabold">GURU</span></span>
+              </div>
               <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">Cloud-Based Multi-Branch Inventory System</p>
               <div className="space-y-1 text-[11px] text-slate-600 font-medium">
                 <p>123 Wholesale Market, Sector 14</p>

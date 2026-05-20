@@ -253,7 +253,7 @@ const Partners = () => {
             </div>
             <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">Partner Registry</h2>
           </div>
-          <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Enterprise Partner Management & Business Approval Infrastructure</p>
+          <p className="text-slate-400 text-sm font-bold tracking-widest">Enterprise Partner Management & Business Approval Infrastructure</p>
         </div>
 
         <div className="flex items-center gap-3 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">

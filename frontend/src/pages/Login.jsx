@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Leaf, Lock, Mail, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import { useUser } from '../context/UserContext';
-import logo from '../assets/logo.png';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -51,8 +50,11 @@ const Login = () => {
       
       <div className="w-full max-w-[420px] relative z-10">
         {/* Logo Section */}
-        <div className="text-center mb-8 flex flex-col items-center">
-          <img src={logo} alt="Fresh Guru" className="h-16 object-contain mb-2" />
+        <div className="text-center mb-8 flex flex-col items-center select-none">
+          <div className="flex items-center gap-2.5 mb-1">
+            <Leaf className="w-9 h-9 text-[#006e2f] shrink-0 filter drop-shadow-[0_4px_12px_rgba(16,185,129,0.25)]" />
+            <span className="text-3xl font-black text-slate-900 tracking-wider logo-font">FRESH <span className="text-[#006e2f] font-extrabold">GURU</span></span>
+          </div>
           <p className="text-[10px] text-slate-400 uppercase tracking-[0.4em] font-black mt-1">ADMIN PORTAL</p>
         </div>
 

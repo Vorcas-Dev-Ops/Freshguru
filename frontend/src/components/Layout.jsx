@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import logo from '../assets/logo.png';
 import { 
   LayoutDashboard, 
   Users, 

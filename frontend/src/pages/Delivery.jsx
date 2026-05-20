@@ -48,6 +48,7 @@ const Delivery = () => {
   const [loadingItems, setLoadingItems] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [editedAddress, setEditedAddress] = useState('');
+  const [selectedDriverDetails, setSelectedDriverDetails] = useState(null);
   const [newDriver, setNewDriver] = useState({
     name: '',
     contact: '',
@@ -111,6 +112,31 @@ const Delivery = () => {
       }
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const toggleDriverStatus = async (driverId, currentStatus) => {
+    const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+    const token = localStorage.getItem('admin_token');
+    try {
+      const response = await fetch(`${API_URL}/${driverId}/status`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (response.ok) {
+        showNotification(`Driver status updated to ${newStatus}`);
+        fetchDrivers();
+      } else {
+        const data = await response.json();
+        showNotification(data.message || 'Failed to update driver status', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showNotification('Server error', 'error');
     }
   };
 
@@ -224,6 +250,7 @@ const Delivery = () => {
       console.error(err);
     }
   };
+
 
   const handleOpenOrderModal = async (orderId) => {
     const foundOrder = orders.find(o => o.id === orderId);
@@ -466,8 +493,8 @@ const Delivery = () => {
       )}
 
       {/* 📊 High-Density Header */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
-        <div className="flex-1 flex items-start gap-3">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 mb-4">
+        <div className="flex items-start gap-3">
           <div className="w-8 h-8 bg-[#0a4a34] rounded-lg flex items-center justify-center shadow-lg shadow-green-900/10 shrink-0 mt-1">
             <Truck className="w-5 h-5 text-white animate-pulse" />
           </div>
@@ -478,6 +505,20 @@ const Delivery = () => {
             </div>
             <p className="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mt-1.5">Real-Time Dispatch Management & Fleet Logistics Pipeline</p>
           </div>
+        </div>
+
+        {/* Header Action Buttons */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 px-5 py-3 bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-100/50 dark:border-emerald-900/30 rounded-2xl text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            Active Drivers: {drivers.filter(d => d.status === 'Active').length}/{drivers.length}
+          </div>
+          <button 
+            onClick={() => setShowAddDriverModal(true)}
+            className="flex items-center gap-2 px-6 py-3 bg-[#0a4a34] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-800 transition-all shadow-lg shadow-green-950/20 active:scale-95 group shrink-0"
+          >
+            <UserPlus className="w-4 h-4 group-hover:rotate-12 transition-transform" /> Register Driver
+          </button>
         </div>
       </div>
 
@@ -537,19 +578,13 @@ const Delivery = () => {
             >
               <Filter className="w-4 h-4" /> {groupByZone ? 'UNGROUP ZONES' : 'GROUP BY ZONES'}
             </button>
-            <button 
-              onClick={() => setShowAddDriverModal(true)}
-              className="flex items-center gap-2 px-6 py-3 bg-[#0a4a34] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-800 transition-all shadow-lg shadow-green-950/20 active:scale-95 group"
-            >
-              <UserPlus className="w-4 h-4 group-hover:rotate-12 transition-transform" /> Register Driver
-            </button>
           </div>
         </div>
 
         {/* 🚀 Split Pane: Kanban Pipeline */}
-        <div className="p-8 bg-slate-50/50 dark:bg-slate-900/50 min-h-[600px]">
+        <div className="p-8 bg-slate-50/50 dark:bg-slate-900/50 min-h-[600px] flex flex-col lg:flex-row gap-8">
           {/* Kanban Pipeline */}
-          <div className="w-full flex flex-col gap-10">
+          <div className="flex-1 flex flex-col gap-10">
             {(pipelineFilter === 'ALL' || pipelineFilter === 'NEW') && (
               <KanbanColumn 
                 title="NEW ORDERS" 
@@ -579,6 +614,137 @@ const Delivery = () => {
                 onUpdateItems={handleUpdateItems}
               />
             )}
+          </div>
+
+          {/* Drivers Sidebar Panel */}
+          <div className="w-full lg:w-80 shrink-0 flex flex-col gap-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] p-6 shadow-sm flex flex-col gap-4">
+              <div className="flex items-center justify-between border-b border-slate-50 dark:border-slate-800 pb-3">
+                <div>
+                  <h3 className="text-sm font-black text-slate-700 dark:text-slate-350 uppercase tracking-tight">Delivery Partner</h3>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Driver Status</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[9px] font-black bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded-lg border border-emerald-100/50">
+                    Active: {drivers.filter(d => d.status === 'Active').length}/{drivers.length}
+                  </span>
+                  <button 
+                    onClick={() => setShowAddDriverModal(true)} 
+                    className="p-1.5 bg-slate-50 hover:bg-slate-150 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-600 dark:text-slate-300 rounded-lg border border-slate-100 dark:border-slate-700 transition-all flex items-center justify-center shadow-sm"
+                    title="Register Driver"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4 max-h-[500px] overflow-y-auto pr-1">
+                {(() => {
+                  const getDriverDisplayStatus = (driver) => {
+                    const hasOutForDelivery = orders.some(o => o.driver == driver.id && o.status === 'Out for Delivery');
+                    if (hasOutForDelivery) return 'Delivering';
+                    return driver.status === 'Active' ? 'Ready' : 'Offline';
+                  };
+
+                  const readyDrivers = drivers.filter(d => getDriverDisplayStatus(d) === 'Ready');
+                  const deliveringDrivers = drivers.filter(d => getDriverDisplayStatus(d) === 'Delivering');
+                  const offlineDrivers = drivers.filter(d => getDriverDisplayStatus(d) === 'Offline');
+
+                  const renderDriverCard = (d, displayStatus) => {
+                    let cardBg = "bg-slate-50/40 dark:bg-slate-900/10 border-slate-200/30 dark:border-slate-800/50 opacity-75";
+                    let dotColor = "bg-slate-400";
+                    let badgeBg = "bg-slate-50 dark:bg-slate-850 text-slate-500 border border-slate-200/50 dark:border-slate-800/50";
+                    
+                    if (displayStatus === 'Delivering') {
+                      cardBg = "bg-purple-50/50 dark:bg-purple-950/15 border-purple-200/50 dark:border-purple-900/40 hover:bg-purple-55/60 dark:hover:bg-purple-950/25 shadow-sm";
+                      dotColor = "bg-purple-500 animate-pulse";
+                      badgeBg = "bg-purple-50 dark:bg-purple-950/30 text-purple-650 dark:text-purple-400 border border-purple-100/50";
+                    } else if (displayStatus === 'Ready') {
+                      cardBg = "bg-emerald-50/50 dark:bg-emerald-950/10 border-emerald-250/50 dark:border-emerald-900/30 hover:bg-emerald-55/60 dark:hover:bg-emerald-950/20 shadow-sm";
+                      dotColor = "bg-emerald-500";
+                      badgeBg = "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100/50";
+                    } else if (displayStatus === 'Offline') {
+                      cardBg = "bg-rose-50/10 dark:bg-rose-950/5 border-rose-100/40 dark:border-rose-900/20 hover:bg-rose-50/25 dark:hover:bg-rose-950/10 opacity-70";
+                      dotColor = "bg-rose-450";
+                      badgeBg = "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100/40";
+                    }
+                    
+                    return (
+                      <div 
+                        key={d.id} 
+                        onClick={() => setSelectedDriverDetails(d)}
+                        className={`flex items-center gap-3.5 p-3.5 border rounded-2xl cursor-pointer transition-all hover:scale-[1.01] active:scale-98 ${cardBg}`}
+                      >
+                        {d.image_url ? (
+                          <img src={d.image_url} alt={d.name} className="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-slate-850 shadow-sm shrink-0" />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-955/20 border border-emerald-105/30 flex items-center justify-center font-black text-xs text-emerald-650 dark:text-emerald-400 uppercase shrink-0">
+                            {d.name.split(' ').map(n => n[0]).join('')}
+                          </div>
+                        )}
+                        <div>
+                          <span className="block text-[12px] font-black text-slate-855 dark:text-white uppercase tracking-wide">
+                            {d.name}
+                          </span>
+                          <div className="flex items-center gap-1.5 mt-1">
+                            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
+                            <span className={`text-[8.5px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded ${badgeBg}`}>
+                              {displayStatus === 'Delivering' ? 'Out for Delivery' : displayStatus}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  };
+
+                  return (
+                    <div className="space-y-5">
+                      {/* Ready/Active Section */}
+                      {readyDrivers.length > 0 && (
+                        <div className="space-y-2">
+                          <h5 className="text-[9px] font-black text-emerald-600/80 uppercase tracking-widest pl-1">
+                            Active Drivers ({readyDrivers.length})
+                          </h5>
+                          <div className="flex flex-col gap-2">
+                            {readyDrivers.map(d => renderDriverCard(d, 'Ready'))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Delivering Section */}
+                      {deliveringDrivers.length > 0 && (
+                        <div className="space-y-2">
+                          <h5 className="text-[9px] font-black text-purple-650/80 uppercase tracking-widest pl-1">
+                            Out For Delivery ({deliveringDrivers.length})
+                          </h5>
+                          <div className="flex flex-col gap-2">
+                            {deliveringDrivers.map(d => renderDriverCard(d, 'Delivering'))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Offline/Inactive Section */}
+                      {offlineDrivers.length > 0 && (
+                        <div className="space-y-2">
+                          <h5 className="text-[9px] font-black text-rose-500/80 uppercase tracking-widest pl-1">
+                            Inactive / Offline ({offlineDrivers.length})
+                          </h5>
+                          <div className="flex flex-col gap-2">
+                            {offlineDrivers.map(d => renderDriverCard(d, 'Offline'))}
+                          </div>
+                        </div>
+                      )}
+
+                      {drivers.length === 0 && (
+                        <div className="text-center py-10 text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                          No partners registered
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -812,20 +978,26 @@ const Delivery = () => {
                     <Printer className="w-3.5 h-3.5" /> Print Invoice
                   </button>
                   <button 
-                    onClick={() => handleCancelOrder(activeOrderDetails.id)}
-                    className="flex items-center gap-1.5 px-4 py-2.5 border border-red-200 hover:bg-red-500/10 rounded-xl text-[10px] font-black text-red-650 dark:text-red-450 uppercase tracking-widest transition-all"
+                    onClick={() => {
+                      if (window.confirm('Are you sure you want to cancel this order?')) {
+                        handleCancelOrder(activeOrderDetails.id);
+                      }
+                    }}
+                    className="flex items-center gap-1.5 px-4 py-2.5 border border-red-200 hover:bg-red-500/10 rounded-xl text-[10px] font-black text-red-650 dark:text-red-455 uppercase tracking-widest transition-all"
                   >
                     <Trash2 className="w-3.5 h-3.5" /> Cancel Order
                   </button>
-                  <button 
-                    onClick={() => {
-                      const panel = document.getElementById('driver-assignment-panel');
-                      if (panel) panel.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    className="flex items-center gap-1.5 px-4 py-2.5 bg-[#0a4a34] hover:bg-emerald-800 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
-                  >
-                    <UserPlus className="w-3.5 h-3.5" /> Assign Agent
-                  </button>
+                  {isUnassigned && (
+                    <button 
+                      onClick={() => {
+                        const panel = document.getElementById('driver-assignment-panel');
+                        if (panel) panel.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="flex items-center gap-1.5 px-4 py-2.5 bg-[#0a4a34] hover:bg-emerald-800 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                    >
+                      <UserPlus className="w-3.5 h-3.5" /> Assign Agent
+                    </button>
+                  )}
                   <button 
                     onClick={() => setActiveOrderDetails(null)}
                     className="p-2.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all"
@@ -1179,24 +1351,6 @@ const Delivery = () => {
                             </span>
                           </div>
                         </div>
-
-                        {/* Reassignment Dropdown */}
-                        <div className="space-y-1.5">
-                          <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1 block">
-                            Change Driver
-                          </label>
-                          <select 
-                            onChange={(e) => assignSingleDriver(activeOrderDetails.id, e.target.value)}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-[10px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-widest outline-none focus:ring-4 focus:ring-emerald-500/10 cursor-pointer shadow-sm"
-                            value={activeOrderDetails.driver || ''}
-                          >
-                            {drivers.map(d => (
-                              <option key={d.id} value={d.id}>
-                                {d.name.toUpperCase()} ({d.status})
-                              </option>
-                            ))}
-                          </select>
-                        </div>
                       </div>
                     )}
                   </div>
@@ -1206,7 +1360,17 @@ const Delivery = () => {
               </div>
 
               {/* Bottom Actions Footer */}
-              <div className="px-10 py-5 bg-white dark:bg-slate-900 border-t border-slate-200/60 dark:border-slate-800 flex justify-end items-center shrink-0">
+              <div className="px-10 py-5 bg-white dark:bg-slate-900 border-t border-slate-200/60 dark:border-slate-800 flex justify-between items-center shrink-0">
+                <button 
+                  onClick={() => {
+                    if (window.confirm('Are you sure you want to cancel this order?')) {
+                      handleCancelOrder(activeOrderDetails.id);
+                    }
+                  }}
+                  className="px-8 py-3 bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-900/30 text-red-650 dark:text-red-400 border border-red-100 dark:border-red-900/20 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-95 shadow-sm"
+                >
+                  Cancel Order
+                </button>
                 <button 
                   onClick={() => setActiveOrderDetails(null)}
                   className="px-8 py-3 bg-[#0a4a34] hover:bg-emerald-850 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-95 shadow-lg shadow-green-950/10"
@@ -1218,6 +1382,108 @@ const Delivery = () => {
           </div>
         );
       })()}
+      {/* 👤 Driver Details Modal */}
+      {selectedDriverDetails && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-slate-100 dark:border-slate-800">
+            <div className="px-8 py-6 border-b border-slate-50 dark:border-slate-800 flex justify-between items-center bg-slate-50/30 dark:bg-slate-800/20">
+              <div>
+                <h3 className="text-lg font-black text-slate-900 dark:text-white tracking-tighter uppercase">Driver Profile</h3>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1">Credentials & Performance</p>
+              </div>
+              <button 
+                onClick={() => setSelectedDriverDetails(null)} 
+                className="p-2.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-8 space-y-6">
+              {/* Profile Header */}
+              <div className="flex items-center gap-4">
+                {selectedDriverDetails.image_url ? (
+                  <img 
+                    src={selectedDriverDetails.image_url} 
+                    alt={selectedDriverDetails.name} 
+                    className="w-16 h-16 rounded-full object-cover border-2 border-emerald-500 shadow-lg" 
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-250 dark:border-emerald-800 flex items-center justify-center font-black text-xl text-emerald-600 dark:text-emerald-400 uppercase shadow-md">
+                    {selectedDriverDetails.name.split(' ').map(n => n[0]).join('')}
+                  </div>
+                )}
+                <div>
+                  <h4 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                    {selectedDriverDetails.name}
+                  </h4>
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    ID: {selectedDriverDetails.driver_id}
+                  </span>
+                </div>
+              </div>
+
+              {/* Status and Rating Badges */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-100 dark:border-slate-850">
+                  <span className="block text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Status</span>
+                  {(() => {
+                    const hasOutForDelivery = orders.some(o => o.driver == selectedDriverDetails.id && o.status === 'Out for Delivery');
+                    const displayStatus = hasOutForDelivery ? 'Delivering' : (selectedDriverDetails.status === 'Active' ? 'Ready' : 'Offline');
+                    return (
+                      <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded ${
+                        displayStatus === 'Delivering' 
+                          ? 'bg-purple-55 text-purple-650 border border-purple-100' 
+                          : displayStatus === 'Ready' 
+                            ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' 
+                            : 'bg-red-50 text-red-600 border border-red-100'
+                      }`}>
+                        {displayStatus === 'Delivering' ? 'Out for Delivery' : displayStatus}
+                      </span>
+                    );
+                  })()}
+                </div>
+
+                <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-100 dark:border-slate-850">
+                  <span className="block text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Rating</span>
+                  <span className="text-xs font-black text-amber-550 dark:text-amber-400 flex items-center gap-1">
+                    ⭐ {selectedDriverDetails.rating || '5.0'} / 5.0
+                  </span>
+                </div>
+              </div>
+
+              {/* Information List */}
+              <div className="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="font-bold text-slate-400 uppercase tracking-wider">Contact Number</span>
+                  <span className="font-black text-slate-800 dark:text-slate-200">{selectedDriverDetails.contact || 'Not Provided'}</span>
+                </div>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="font-bold text-slate-400 uppercase tracking-wider">Vehicle</span>
+                  <span className="font-black text-slate-800 dark:text-slate-200">{selectedDriverDetails.vehicle || 'Not Assigned'}</span>
+                </div>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="font-bold text-slate-400 uppercase tracking-wider">Total Delivered Orders</span>
+                  <span className="font-black text-slate-800 dark:text-slate-200">{selectedDriverDetails.total_orders || 0}</span>
+                </div>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="font-bold text-slate-400 uppercase tracking-wider">App Username</span>
+                  <span className="font-black text-slate-800 dark:text-slate-200 text-emerald-600">{selectedDriverDetails.username || 'N/A'}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="px-8 py-5 bg-slate-50/50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+              <button 
+                onClick={() => setSelectedDriverDetails(null)}
+                className="px-6 py-2.5 bg-[#0a4a34] text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-800 transition-all active:scale-95 shadow-md"
+              >
+                Close Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -156,8 +156,8 @@ const Dashboard = () => {
             <LayoutGrid className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter leading-none">Business Overview</h2>
-            <p className="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mt-1.5">Real-time Command Center & Store Intelligence</p>
+            <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter leading-none">Real-Time Overview</h2>
+            <p className="text-slate-400 dark:text-slate-500 text-[10px] font-black tracking-[0.2em] mt-1.5">Real-Time Command Center & Store Intelligence</p>
           </div>
         </div>
 
